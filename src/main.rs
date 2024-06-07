@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 mod data;
-use data::{get_data, Stats};
+use data::get_data;
 use dioxus::prelude::*;
 
 use tracing::Level;
@@ -20,12 +20,9 @@ fn main() {
 }
 
 fn App() -> Element {
-    rsx! {
-        div {   display:"flex", flex_direction:"column", width: "80%",
-                div{    width: "50%",Router::<Route> {}
-                    }
+    rsx! {  div {class: "container-sm",
+                Router::<Route> {}
             }
-
     }
 }
 
@@ -40,19 +37,33 @@ fn Wallet(address: String) -> Element {
 #[component]
 fn Home() -> Element {
     let mut address = use_signal(|| "".to_string());
-    let mut btn = use_signal(|| false);
     let mut data = use_resource(move || async move { get_data().await });
 
     match &*data.read_unchecked() {
         Some(Ok(var)) => {
             rsx! {
-                h1 {"API Data: {var.network.height}"}
+                div {class:"mb-3",
+                h1 { "Input: {address}" }
 
-                button {onclick: move |_| data.restart() , "CLICK FOR REFRESH"}
+                    input {class: "form-control form-control-lg", placeholder:"address",
+
+                            oninput: move |input| address.set(input.value())
+                         }
+                    }
+
+                    div {class: "alert alert-primary", role: "alert", "Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
+                h1 {"Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
+                h1 {"Network difficulty: {var.network.difficulty} P"}
+                h1 {"Network height: {var.network.height} "}
+                h1 {"Pool hashrate: {var.pool.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Gh/s"}
+                h1 {"Pool connected miners: {var.pool.connected_miners}"}
+                h1 {"Pool effort: {var.pool.effort}%"}
+                h1 {"Pool total blocks: {var.pool.total_blocks}"}
+
+                button {class: "btn btn-primary", onclick: move |_| data.restart() , "CLICK FOR REFRESH"}
 
                 div {
-                    h1 { "Input: {address}" }
-                    input {oninput: move |input| address.set(input.value())}
+
                 }
             }
         }
