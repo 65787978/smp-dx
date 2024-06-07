@@ -1,0 +1,18 @@
+[package]
+name = "smp-dx"
+version = "0.1.0"
+authors = ["ergXned <126957013+ergXned@users.noreply.github.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+dioxus = { version = "0.5", features = ["web", "router"] }
+reqwest = { version = "0.12.4", features = ["json", "blocking", "gzip", "deflate"] }
+serde_json = "1.0.117"
+
+# Debug
+tracing = "0.1.40"
+dioxus-logger = "0.5.0"
+futures = "0.3.30"
