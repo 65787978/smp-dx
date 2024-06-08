@@ -21,13 +21,20 @@ fn main() {
 
 fn App() -> Element {
     rsx! {
+        main{class:"flex-shrink-0",
 
-        NavBar {},
 
-        div {class: "container-sm",
+                    NavBar {},
 
-                Router::<Route> {}
-            }
+                    div {class: "container-sm",
+
+                            Router::<Route> {}
+                        }
+
+                    Footer{},
+
+        }
+
     }
 }
 
@@ -67,7 +74,7 @@ fn Home() -> Element {
             rsx! { h1 {"{err}"}}
         }
         None => {
-            rsx! { h1 { "Loading API Data" }}
+            rsx! { h1 { "Loading Data..." }}
         }
     }
 }
@@ -96,11 +103,25 @@ fn NavBar() -> Element {
                             li {class: "nav-item", a{ class: "nav-link", href: "/", "Blocks"}}
                             li {class: "nav-item", a{ class: "nav-link", href: "/", "Donations"}}
                             li {class: "nav-item", a{ class: "nav-link", href: "/", "FAQ"}}
-                            li {class: "nav-item", a{ class: "nav-link", href: "/", "Support"}}
+                            li {class: "nav-item", a{ class: "nav-link", href: "https://discord.com/channels/668903786361651200/1153460448214122526", "Support"}}
 
                             }
                     }
 
             }}
+    }
+}
+
+#[component]
+fn Footer() -> Element {
+    rsx! {
+
+    footer {class: "footer mt-auto py-3 bg-body-tertiary margin-top-5",
+
+        div {class:"container justify-content-lg-center",
+            span {class:"text-body-secondary", "Build with love from the Ergo Community"}
+            }
+        }
+
     }
 }
