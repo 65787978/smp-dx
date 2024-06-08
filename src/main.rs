@@ -48,13 +48,16 @@ fn Home() -> Element {
             rsx! {
                 div {class:"alert alert-primary", role: "alert",
 
-                    input {class: "form-control form-control-lg", placeholder:"address",
+                    div {class: "row align-items-center",
+                        div {class: "col", width: "80%", input {class: "form-control form-control-lg", placeholder:"Enter your mining address here...",  oninput: move |input| address.set(input.value())}}
+                        div {class: "col-auto", Link {class: "btn btn-secondary", to: Route::Wallet { address: address() }, "Search"}}
 
-                            oninput: move |input| address.set(input.value())
-                         }
+
                     }
 
-                    div {class: "alert alert-primary", role: "alert", "Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
+                }
+
+                div {class: "alert alert-primary", role: "alert", "Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
                 h1 {"Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
                 h1 {"Network difficulty: {var.network.difficulty} P"}
                 h1 {"Network height: {var.network.height} "}
@@ -64,10 +67,6 @@ fn Home() -> Element {
                 h1 {"Pool total blocks: {var.pool.total_blocks}"}
 
                 button {class: "btn btn-primary", onclick: move |_| data.restart() , "CLICK FOR REFRESH"}
-
-                div {
-
-                }
             }
         }
         Some(Err(err)) => {
@@ -116,7 +115,7 @@ fn NavBar() -> Element {
 fn Footer() -> Element {
     rsx! {
 
-    footer {class: "footer mt-auto py-3 bg-body-tertiary margin-top-5",
+    footer {class: "footer mt-auto py-3 bg-body-tertiary",
 
         div {class:"container justify-content-lg-center",
             span {class:"text-body-secondary", "Build with love from the Ergo Community"}
