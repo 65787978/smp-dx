@@ -20,17 +20,14 @@ fn main() {
 }
 
 fn App() -> Element {
-    rsx! {  div {class: "container-sm",
+    rsx! {
+
+        NavBar {},
+
+        div {class: "container-sm",
+
                 Router::<Route> {}
             }
-    }
-}
-
-#[component]
-fn Wallet(address: String) -> Element {
-    rsx! {
-        // Link { to: Route::Home {}, "Go to counter" }
-        "Blog post {address}"
     }
 }
 
@@ -42,8 +39,7 @@ fn Home() -> Element {
     match &*data.read_unchecked() {
         Some(Ok(var)) => {
             rsx! {
-                div {class:"mb-3",
-                h1 { "Input: {address}" }
+                div {class:"alert alert-primary", role: "alert",
 
                     input {class: "form-control form-control-lg", placeholder:"address",
 
@@ -73,5 +69,38 @@ fn Home() -> Element {
         None => {
             rsx! { h1 { "Loading API Data" }}
         }
+    }
+}
+
+#[component]
+fn Wallet(address: String) -> Element {
+    rsx! {
+        // Link { to: Route::Home {}, "Go to counter" }
+        "Blog post {address}"
+    }
+}
+
+#[component]
+fn NavBar() -> Element {
+    rsx! {
+        nav { class: "navbar navbar-expand-lg bg-body-tertiary rounded",
+
+            div { class: "container-fluid",
+
+
+                div {class: "collapse navbar-collapse d-lg-flex",
+
+                        a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
+
+                        ul {class: "navbar-nav col-lg-6 justify-content-lg-center",
+                            li {class: "nav-item", a{ class: "nav-link", href: "/", "Blocks"}}
+                            li {class: "nav-item", a{ class: "nav-link", href: "/", "Donations"}}
+                            li {class: "nav-item", a{ class: "nav-link", href: "/", "FAQ"}}
+                            li {class: "nav-item", a{ class: "nav-link", href: "/", "Support"}}
+
+                            }
+                    }
+
+            }}
     }
 }
