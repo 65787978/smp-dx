@@ -1,7 +1,7 @@
 # Sigmanauts Mining Pool dashboard implementation in Dioxus on Rust
-Main features: - blazingly fast
-               - hot-reloading
-               - reactive elements
+- Main features: - blazingly fast
+                 - hot-reloading
+                 - reactive elements
                
 # Development
 
