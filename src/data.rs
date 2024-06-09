@@ -116,7 +116,7 @@ impl MinerStats {
     }
 
     pub async fn get_data(&mut self, address: String) -> Result<(), reqwest::Error> {
-        let miner_api_url = format!("{}/{}/{}", POOL_API_URL, "miners", address.as_str());
+        let miner_api_url = format!("{}/{}/{}", POOL_API_URL, "miners", address);
 
         let data: serde_json::Value = Client::new()
             .get(miner_api_url)

@@ -91,9 +91,8 @@ fn Home() -> Element {
 
 #[component]
 fn Wallet(address: String) -> Element {
-    let mut data = use_resource(move || async move {
-        get_data("9fLytFFzTYALknc2AZ2dRKeg8sLZwe4LX5qAB3FwDysMEeRTHkV".to_string()).await
-    });
+    let address = use_signal(|| address.to_string());
+    let mut data = use_resource(move || async move { get_data(address()).await });
 
     let mut num: u8 = 1;
     let mut total_hashrate: f64 = 0.0;
@@ -130,14 +129,16 @@ fn Wallet(address: String) -> Element {
                             tr{
                                 th{ scope: "col", "Total:"}
                                 th{ scope: "col", ""}
-                                th{ scope: "col", "{total_hashrate} Mh/s"}
+                                th{ scope: "col", "{(total_hashrate * 100.0).round() / 100.0} Mh/s"}
                             }
                        }
                     }
             }
         },
         Some(Err(error)) => rsx! { h1 { "Loading failed!"}},
-        None => rsx! { h1 { "Loading..."}},
+        None => {
+            rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
+        }
     }
 }
 
