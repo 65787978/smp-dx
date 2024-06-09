@@ -91,7 +91,7 @@ fn Home() -> Element {
 
 #[component]
 fn Wallet(address: String) -> Element {
-    let address = use_signal(|| address.to_string());
+    let address = use_signal(|| address);
     let mut data = use_resource(move || async move { get_data(address()).await });
 
     let mut num: u8 = 1;
