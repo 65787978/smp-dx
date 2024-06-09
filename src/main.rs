@@ -1,10 +1,11 @@
 #![allow(non_snake_case)]
 mod data;
-use data::get_data;
+use data::{get_data, MinerStats};
 use dioxus::prelude::*;
 
+use std::thread;
+use std::time::Duration;
 use tracing::Level;
-
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
     #[route("/")]
@@ -41,48 +42,102 @@ fn App() -> Element {
 #[component]
 fn Home() -> Element {
     let mut address = use_signal(|| "".to_string());
-    let mut data = use_resource(move || async move { get_data().await });
+    // let mut data = use_resource(move || async move { get_data().await });
 
-    match &*data.read_unchecked() {
-        Some(Ok(var)) => {
-            rsx! {
-                div {class:"alert alert-primary", role: "alert",
+    // match &*data.read_unchecked() {
+    //     Some(Ok(var)) => {
+    //         rsx! {
+    //             div {class:"alert alert-primary", role: "alert",
 
-                    div {class: "row align-items-center",
-                        div {class: "col", width: "80%", input {class: "form-control form-control-lg", placeholder:"Enter your mining address here...",  oninput: move |input| address.set(input.value())}}
-                        div {class: "col-auto", Link {class: "btn btn-secondary", to: Route::Wallet { address: address() }, "Search"}}
+    //                 div {class: "row align-items-center",
+    //                     div {class: "col", width: "80%", input {class: "form-control form-control-lg", placeholder:"Enter your mining address here...",  oninput: move |input| address.set(input.value())}}
+    //                     div {class: "col-auto", Link {class: "btn btn-primary", to: Route::Wallet { address: address() }, "Search"}}
 
+    //                 }
 
-                    }
+    //             }
 
-                }
+    //             div {class: "alert alert-primary", role: "alert", "Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
+    //             h1 {"Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
+    //             h1 {"Network difficulty: {var.network.difficulty} P"}
+    //             h1 {"Network height: {var.network.height} "}
+    //             h1 {"Pool hashrate: {var.pool.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Gh/s"}
+    //             h1 {"Pool connected miners: {var.pool.connected_miners}"}
+    //             h1 {"Pool effort: {var.pool.effort}%"}
+    //             h1 {"Pool total blocks: {var.pool.total_blocks}"}
 
-                div {class: "alert alert-primary", role: "alert", "Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
-                h1 {"Network hashrate: {var.network.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Th/s"}
-                h1 {"Network difficulty: {var.network.difficulty} P"}
-                h1 {"Network height: {var.network.height} "}
-                h1 {"Pool hashrate: {var.pool.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Gh/s"}
-                h1 {"Pool connected miners: {var.pool.connected_miners}"}
-                h1 {"Pool effort: {var.pool.effort}%"}
-                h1 {"Pool total blocks: {var.pool.total_blocks}"}
+    //             button {class: "btn btn-primary", onclick: move |_| data.restart() , "CLICK FOR REFRESH"}
+    //         }
+    //     }
+    //     Some(Err(err)) => {
+    //         rsx! { h1 {"{err}"}}
+    //     }
+    //     None => {
+    //         rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}
+    //         }
+    //     }
+    // }
+    rsx! {
+            div {class:"alert alert-primary", role: "alert",
 
-                button {class: "btn btn-primary", onclick: move |_| data.restart() , "CLICK FOR REFRESH"}
-            }
-        }
-        Some(Err(err)) => {
-            rsx! { h1 {"{err}"}}
-        }
-        None => {
-            rsx! { h1 { "Loading Data..." }}
+                        div {class: "row align-items-center",
+                            div {class: "col", width: "80%", input {class: "form-control form-control-lg", placeholder:"Enter your mining address here...",  oninput: move |input| address.set(input.value())}}
+                            div {class: "col-auto", Link {class: "btn btn-primary", to: Route::Wallet { address: address() }, "Search"}}
+
+                        }
         }
     }
 }
 
 #[component]
 fn Wallet(address: String) -> Element {
-    rsx! {
-        // Link { to: Route::Home {}, "Go to counter" }
-        "Blog post {address}"
+    let mut data = use_resource(move || async move {
+        get_data("9fLytFFzTYALknc2AZ2dRKeg8sLZwe4LX5qAB3FwDysMEeRTHkV".to_string()).await
+    });
+
+    let mut num: u8 = 1;
+    let mut total_hashrate: f64 = 0.0;
+
+    match &*data.read_unchecked() {
+        Some(Ok(stats)) => rsx! {
+            h1 {"Address: {address.clone()}"}
+
+            div {
+                table {class: "table table-hover",
+
+                        thead {
+                            tr{
+                                th{ scope: "col", "#"}
+                                th{ scope: "col", "Worker Name"}
+                                th{ scope: "col", "Hashrate"}
+                            }
+                       }
+
+                       tbody {
+
+
+                            for worker in stats.miner.workers.iter(){
+                            tr{
+                                th{ scope: "row", "{num}"}
+                                td{"{worker.name}"}
+                                td{"{worker.hashrate} Mh/s"}
+                            }
+                            {num += 1;
+                                total_hashrate += worker.hashrate}
+                            }
+                        }
+                        thead {
+                            tr{
+                                th{ scope: "col", "Total:"}
+                                th{ scope: "col", ""}
+                                th{ scope: "col", "{total_hashrate} Mh/s"}
+                            }
+                       }
+                    }
+            }
+        },
+        Some(Err(error)) => rsx! { h1 { "Loading failed!"}},
+        None => rsx! { h1 { "Loading..."}},
     }
 }
 

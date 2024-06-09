@@ -1,6 +1,17 @@
+use dioxus::prelude::SuperInto;
 use reqwest::{self, Client};
 use std::collections::VecDeque;
 use std::fmt;
+
+const POOL_API_URL: &str = "http://15.204.211.130:4000/api/pools/ErgoSigmanauts";
+
+#[derive(Debug, Default)]
+pub struct Worker {
+    pub name: String,
+    pub hashrate: f64,
+    pub shares_per_second: f64,
+}
+
 #[derive(Debug, Default)]
 pub struct NetworkStats {
     pub hashrate: VecDeque<(f64, f64)>,
@@ -28,6 +39,8 @@ pub struct MinerStats {
     pub pending_balance: f64,
     pub round_contribution: f64,
     pub total_paid: f64,
+    pub today_paid: f64,
+    pub workers: Vec<Worker>,
 }
 
 #[derive(Debug, Default)]
@@ -39,177 +52,117 @@ pub struct Stats {
 
 impl fmt::Display for Stats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Implement the Display trait for the Stats struct here
-        // You can format and print out the fields of Stats as needed
-        println!("{:#?}", self);
+        write!(f, "{:#?}", self)
+    }
+}
 
-        write!(f, "Stats data here")
+impl fmt::Display for Worker {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:#?}", self)
     }
 }
 
 /// Get data from Mining Core API
-pub async fn get_data() -> Result<Stats, reqwest::Error> {
-    let pool_api_url = "http://15.204.211.130:4000/api/pools/ErgoSigmanauts";
-    let price_api_url = "https://api.spectrum.fi/v1/price-tracking/cmc/markets";
-    let hashrate_api = "https://api.ergoplatform.com/info";
+pub async fn get_data(address: String) -> Result<Stats, reqwest::Error> {
+    let mut network_stats = NetworkStats::default().await;
+    let mut pool_stats = PoolStats::default().await;
+    let mut miner_stats = MinerStats::default().await;
 
-    let data: serde_json::Value = Client::new().get(pool_api_url).send().await?.json().await?;
+    miner_stats.get_data(address).await.unwrap();
 
-    let mut stats = Stats {
-        network: NetworkStats::default(),
-        pool: PoolStats::default(),
-        miner: MinerStats::default(),
-    };
+    Ok(Stats {
+        network: network_stats,
+        pool: pool_stats,
+        miner: miner_stats,
+    })
+}
 
-    //Format block height
-    let block_height = data["pool"]["networkStats"]["blockHeight"].clone().as_u64();
-
-    //Only update the data if a new block is added to the chain
-    if block_height.unwrap() != stats.network.height {
-        match block_height {
-            Some(block_height) => stats.network.height = block_height,
-            None => println!("No data available for Block Height"),
+impl NetworkStats {
+    pub async fn default() -> Self {
+        NetworkStats {
+            hashrate: VecDeque::default(),
+            difficulty: f64::default(),
+            height: u64::default(),
+            reward: u8::default(),
+            reward_reduction: u8::default(),
+            price: f64::default(),
         }
+    }
+}
 
-        let price_data: serde_json::Value = Client::new()
-            .get(price_api_url)
-            .send()
-            .await?
-            .json()
-            .await?;
-        let hashrate_data: serde_json::Value =
-            Client::new().get(hashrate_api).send().await?.json().await?;
-
-        // Network Hashrate
-        let network_hashrate = hashrate_data["hashRate"].clone().as_f64();
-
-        match network_hashrate {
-            Some(network_hashrate) => {
-                let network_hashrate =
-                    ((network_hashrate / 1_000_000_000_000.0) * 100.0).round() / 100.0;
-                stats
-                    .network
-                    .hashrate
-                    .push_back((block_height.unwrap() as f64, network_hashrate));
-            }
-
-            None => println!("No data available for Network Hashrate"),
+impl PoolStats {
+    pub async fn default() -> PoolStats {
+        PoolStats {
+            hashrate: VecDeque::default(),
+            connected_miners: u64::default(),
+            effort: f64::default(),
+            total_blocks: u64::default(),
+            confirming_new_block: f64::default(),
         }
-
-        // Network Difficulty
-        let network_difficulty = data["pool"]["networkStats"]["networkDifficulty"]
-            .clone()
-            .as_f64();
-
-        match network_difficulty {
-            Some(network_difficulty) => {
-                //round to 2 decimals
-                let network_difficulty =
-                    ((network_difficulty / 1_000_000_000_000_000.0) * 100.0).round() / 100.0;
-                stats.network.difficulty = network_difficulty;
-            }
-
-            None => println!("No data available for Network Difficulty"),
+    }
+}
+impl MinerStats {
+    pub async fn default() -> Self {
+        MinerStats {
+            hashrate: VecDeque::default(),
+            average_hashrate: f64::default(),
+            pending_balance: f64::default(),
+            pending_shares: f64::default(),
+            round_contribution: f64::default(),
+            total_paid: f64::default(),
+            today_paid: f64::default(),
+            workers: Vec::default(),
         }
+    }
 
-        // ERG Price
+    pub async fn get_data(&mut self, address: String) -> Result<(), reqwest::Error> {
+        let miner_api_url = format!("{}/{}/{}", POOL_API_URL, "miners", address.as_str());
 
-        if let serde_json::Value::Array(arr) = price_data {
-            for obj in arr {
-                if let serde_json::Value::Object(o) = obj {
-                    if let Some(base_name) = o.get("base_name") {
-                        if base_name == "ERG" {
-                            if let Some(quote_name) = o.get("quote_name") {
-                                if quote_name == "SigUSD" {
-                                    if let Some(last_price) = o.get("last_price") {
-                                        if let Some(price) = last_price.as_f64() {
-                                            stats.network.price =
-                                                ((1.0 / price) * 100.0).round() / 100.0;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //Pool hashrate
-        let pool_hashrate = data["pool"]["poolStats"]["poolHashrate"].clone().as_f64();
-
-        match pool_hashrate {
-            Some(pool_hashrate) => {
-                let pool_hashrate = ((pool_hashrate / 1_000_000_000.0) * 100.0).round() / 100.0;
-                stats
-                    .pool
-                    .hashrate
-                    .push_back((stats.network.height as f64, pool_hashrate))
-            }
-
-            None => println!("No data available for Pool Hashrate"),
-        }
-
-        //Pool connected miners
-        let connected_miners = data["pool"]["poolStats"]["connectedMiners"]
-            .clone()
-            .as_u64();
-
-        match connected_miners {
-            Some(connected_miners) => stats.pool.connected_miners = connected_miners,
-
-            None => println!("No data available for Connected Miners"),
-        }
-
-        //Pool effort
-        let pool_effort = data["pool"]["poolEffort"].clone().as_f64();
-
-        match pool_effort {
-            Some(pool_effort) => {
-                let pool_effort = (pool_effort * 10000.0).round() / 100.0;
-                stats.pool.effort = pool_effort;
-            }
-
-            None => println!("No data available for Pool Effort"),
-        }
-
-        //Pool total blocks
-        let pool_total_blocks = data["pool"]["totalBlocks"].clone().as_u64();
-
-        match pool_total_blocks {
-            Some(pool_total_blocks) => {
-                stats.pool.total_blocks = pool_total_blocks;
-            }
-
-            None => println!("No data available for Pool Effort"),
-        }
-
-        //Pool confirming new block
-
-        let block_data: serde_json::Value = Client::new()
-            .get(format!("{}/blocks", pool_api_url))
+        let data: serde_json::Value = Client::new()
+            .get(miner_api_url)
             .send()
             .await?
             .json()
             .await?;
 
-        let pool_block_confirmation: (&str, f64) = (
-            block_data[0]["status"].as_str().unwrap(),
-            (block_data[0]["confirmationProgress"].as_f64().unwrap()) * 100.0,
-        );
+        //Hashrate
 
-        if pool_block_confirmation.0 == "pending" {
-            stats.pool.confirming_new_block = pool_block_confirmation.1;
-        } else {
-            stats.pool.confirming_new_block = 100.0;
+        //Average hashrate
+
+        self.pending_balance = data["pendingBalance"]
+            .as_f64()
+            .expect("pendingBalance not available");
+
+        self.pending_shares = data["pendingShares"]
+            .as_f64()
+            .expect("pendingShares not available");
+
+        // Round contribution
+
+        self.pending_balance = data["pendingBalance"]
+            .as_f64()
+            .expect("pendingBalance not available");
+
+        self.total_paid = data["totalPaid"].as_f64().expect("totalPaid not available");
+
+        self.today_paid = data["todayPaid"].as_f64().expect("todayPaid not available");
+
+        for (key, value) in data["performance"]["workers"].clone().as_object().unwrap() {
+            self.workers.push(Worker {
+                name: key.to_string(),
+                hashrate: ((value["hashrate"]
+                    .as_f64()
+                    .expect("failed to load worker hashrate")
+                    / 1_000_000.0)
+                    * 100.0)
+                    .round()
+                    / 100.0,
+                shares_per_second: value["sharesPerSecond"]
+                    .as_f64()
+                    .expect("failed to load worker shares per second"),
+            })
         }
-    }
 
-    //Store only the last 720 blocks (720 * 2min = 24h)
-    if stats.network.hashrate.len() > 720 {
-        stats.network.hashrate.pop_front();
-        stats.pool.hashrate.pop_front();
+        Ok(())
     }
-
-    Ok(stats)
 }
