@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 mod data;
-use data::{get_data, MinerStats};
+use data::get_data;
 use dioxus::prelude::*;
 
 use std::thread;
@@ -92,7 +92,7 @@ fn Home() -> Element {
 #[component]
 fn Wallet(address: String) -> Element {
     let address = use_signal(|| address);
-    let mut data = use_resource(move || async move { get_data(address()).await });
+    let data = use_resource(move || async move { get_data(address()).await });
 
     let mut num: u8 = 1;
     let mut total_hashrate: f64 = 0.0;
@@ -100,6 +100,11 @@ fn Wallet(address: String) -> Element {
     match &*data.read_unchecked() {
         Some(Ok(stats)) => rsx! {
             h1 {"Address: {address.clone()}"}
+
+            div { h1 { "Average 24h hashrate: {stats.miner.average_hashrate}"}}
+
+            div { "Miner Hashrate: {stats.miner}"}
+
 
             div {
                 table {class: "table table-hover",
@@ -135,7 +140,7 @@ fn Wallet(address: String) -> Element {
                     }
             }
         },
-        Some(Err(error)) => rsx! { h1 { "Loading failed!"}},
+        Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
         None => {
             rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
         }
@@ -149,7 +154,9 @@ fn NavBar() -> Element {
 
             div { class: "container-fluid",
 
-            button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation", span{class:"navbar-toggler-icon"}}
+            button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation",
+                    span{class:"navbar-toggler-icon"}
+                }
 
                 div {class: "collapse navbar-collapse d-lg-flex", id:"navbar",
 

@@ -1,3 +1,4 @@
+use chrono::{DateTime, TimeZone, Timelike, Utc};
 use dioxus::prelude::SuperInto;
 use reqwest::{self, Client};
 use std::collections::VecDeque;
@@ -33,7 +34,7 @@ pub struct PoolStats {
 
 #[derive(Debug, Default)]
 pub struct MinerStats {
-    pub hashrate: VecDeque<(f64, f64)>,
+    pub hashrate: VecDeque<(u32, f64)>,
     pub average_hashrate: f64,
     pub pending_shares: f64,
     pub pending_balance: f64,
@@ -62,6 +63,11 @@ impl fmt::Display for Worker {
     }
 }
 
+impl fmt::Display for MinerStats {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:#?}", self)
+    }
+}
 /// Get data from Mining Core API
 pub async fn get_data(address: String) -> Result<Stats, reqwest::Error> {
     let mut network_stats = NetworkStats::default().await;
@@ -126,8 +132,35 @@ impl MinerStats {
             .await?;
 
         //Hashrate
+        if let serde_json::Value::Array(sample_array) = data["performanceSamples"].clone() {
+            for sample in sample_array.iter() {
+                let time = sample["created"]
+                    .as_str()
+                    .expect("time for sample not available");
 
-        //Average hashrate
+                let date_time: DateTime<Utc> = DateTime::parse_from_rfc3339(time).unwrap().into();
+                let hour = date_time.hour();
+
+                let mut hashrate: f64 = 0.0;
+
+                for (_key, value) in sample["workers"].as_object().unwrap() {
+                    hashrate += value["hashrate"]
+                        .as_f64()
+                        .expect("sample hashrate not available");
+                }
+
+                hashrate = (hashrate / 10_000.0).round() / 100.0;
+
+                self.hashrate.push_back((hour, hashrate));
+            }
+        }
+
+        //Average hashrate last 24h
+        let mut total_hash = 0.0;
+        for hashrate in self.hashrate.iter() {
+            total_hash += hashrate.1;
+        }
+        self.average_hashrate = ((total_hash / self.hashrate.len() as f64) * 100.0).round() / 100.0;
 
         self.pending_balance = data["pendingBalance"]
             .as_f64()
