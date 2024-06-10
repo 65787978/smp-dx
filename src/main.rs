@@ -94,73 +94,107 @@ fn Wallet(address: String) -> Element {
     let address = use_signal(|| address);
     let data = use_resource(move || async move { get_data(address()).await });
 
-    /*
-        pub struct NetworkStats {
-        pub hashrate: VecDeque<(f64, f64)>,
-        pub difficulty: f64,
-        pub height: u64,
-        pub reward: u8,
-        pub reward_reduction: u8,
-        pub price: f64,
-    }
-         */
-    rsx! {    div {class: "container text-strech",
-    div {class:"row align-items-start",
-            div {class: "col",
-                div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
-                        div {class: "card-title m-2", b {"POOL HASHRATE"}}
-                        p {class:"card-text m-2", "Info"}
-                    }
-            },
-            div {class: "col",
-                div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
-                        div {class: "card-title m-2", b {"MINERS"}}
-                        p {class:"card-text m-2", "Info"}
-                    }
-            },
-            div {class: "col",
-                div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
-                        div {class: "card-title m-2", b {"TOTAL BLOCKS"}}
-                        p {class:"card-text m-2", "Info"}
-                    }
-            },
-            div {class: "col",
-                div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
-                        div {class: "card-title m-2", b {"EFFORT"}}
-                        p {class:"card-text m-2", "Info"}
-                    }
-            },
+    match &*data.read_unchecked() {
+        Some(Ok(stats)) => rsx! {
 
+            div {class: "container text-begin",
+                div {class:"row align-items-start",
+                    div {class:"col",
+                        div {class:"card text-bg-light m-2", style:"min-width: 30rem; min-height: 3rem;",
+                            div {class:"card-title m-2", b {"{address.clone()}"}}
+                        }
+                    }
+                }
+                div {class:"row align-items-start",
+                        div {class: "col",
+                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                                    div {class: "card-title m-2", b {"POOL HASHRATE"}}
+                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Gh/s"}}
+
+                                }
+                        },
+                        div {class: "col",
+                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                                    div {class: "card-title m-2", b {"MINERS"}}
+                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.connected_miners}"}}
+                                }
+                        },
+                        div {class: "col",
+                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                                    div {class: "card-title m-2", b {"TOTAL BLOCKS"}}
+                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.total_blocks}"}}
+                                }
+                        },
+                        div {class: "col",
+                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                                    div {class: "card-title m-2", b {"EFFORT"}}
+                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.effort}%"}}
+                                }
+                        },
+                    },
+                div {class:"row align-items-start",
+                    div {class:"col",
+                        div {class:"card text-bg-light m-2", style:"min-width: 30rem; min-height: 8rem;",
+                            div {class:"card-title m-2", b {"HASHRATE"}}
+                            div {class:"row justify-content-center",
+                                div {class: "col",
+                                        div {class:"card-body",
+                                        h4 {class:"card-text m-2", "{stats.miner.hashrate_current} Mh/s"}
+                                            p {class:"card-text m-2", "Current"}
+                                            }
+                                    }
+                                div {class: "col",
+                                        div {class:"card-body",
+                                            h4 {class:"card-text m-2", "{stats.miner.hashrate_6h} Mh/s"}
+                                            p {class:"card-text m-2", "6h Average"}
+                                            }
+                                    }
+                                div {class: "col",
+                                        div {class:"card-body",
+                                            h4 {class:"card-text m-2", "{stats.miner.hashrate_24h} Mh/s"}
+                                            p {class:"card-text m-2", "24h Average"}
+                                            }
+                                }
+                                div {class: "col",
+                                div {class:"card-body",
+                                    h4 {class:"card-text m-2", "{stats.miner.paid_24h} Σ"}
+                                    p {class:"card-text m-2", "24h Paid"}
+                                    }
+                        }
+                                }
+                        }
+                    }
+                }
+                {Chart()}
+                {WorkerTable(stats.clone())}
+            }
         },
-
-
-
+        Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
+        None => {
+            rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
         }
     }
+}
 
-    // match &*data.read_unchecked() {
-    //     Some(Ok(stats)) => rsx! {
-    //         h1 {"Address: {address.clone()}"}
-
-    //         div { h1 { "Average 24h hashrate: {stats.miner.average_hashrate}"}}
-
-    //         div { "Miner Hashrate: {stats.miner}"}
-
-    //         {WorkerTable(stats.clone())}
-
-    //     },
-    //     Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
-    //     None => {
-    //         rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
-    //     }
-    // }
+fn Chart() -> Element {
+    rsx!(
+        div {class:"row justify-content-center",
+        div {class:"col",
+                        div {class:"card text-bg-light m-2", style:"min-width: 30rem; min-height: 24rem;",
+                            div {class:"card-title m-2", b {"Chart"}
+                        }
+                    }
+                }
+            }
+    )
 }
 
 fn WorkerTable(stats: Stats) -> Element {
-    let mut num: u8 = 1;
+    let mut active_workers: u8 = 1;
     let mut total_hashrate: f64 = 0.0;
     rsx!(
         div {
+            h3 {" Active workers: {stats.miner.workers.len()}"}
             table {class: "table table-hover",
 
                     thead {
@@ -176,11 +210,11 @@ fn WorkerTable(stats: Stats) -> Element {
 
                         for worker in stats.miner.workers.iter(){
                         tr{
-                            th{ scope: "row", "{num}"}
+                            th{ scope: "row", "{active_workers}"}
                             td{"{worker.name}"}
                             td{"{worker.hashrate} Mh/s"}
                         }
-                        {num += 1;
+                        {active_workers += 1;
                             total_hashrate += worker.hashrate}
                         }
                     }

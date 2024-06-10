@@ -1,4 +1,4 @@
-use chrono::{DateTime, TimeZone, Timelike, Utc};
+use chrono::{round, DateTime, TimeZone, Timelike, Utc};
 use dioxus::prelude::SuperInto;
 use reqwest::{self, Client};
 use std::collections::VecDeque;
@@ -34,13 +34,15 @@ pub struct PoolStats {
 
 #[derive(Debug, Default, Clone)]
 pub struct MinerStats {
-    pub hashrate: VecDeque<(u32, f64)>,
-    pub average_hashrate: f64,
+    pub hashrate_collection: VecDeque<(u32, f64)>,
+    pub hashrate_current: f64,
+    pub hashrate_6h: f64,
+    pub hashrate_24h: f64,
     pub pending_shares: f64,
     pub pending_balance: f64,
     pub round_contribution: f64,
     pub total_paid: f64,
-    pub today_paid: f64,
+    pub paid_24h: f64,
     pub workers: Vec<Worker>,
 }
 
@@ -110,13 +112,15 @@ impl PoolStats {
 impl MinerStats {
     pub async fn default() -> Self {
         MinerStats {
-            hashrate: VecDeque::default(),
-            average_hashrate: f64::default(),
+            hashrate_collection: VecDeque::default(),
+            hashrate_current: f64::default(),
+            hashrate_6h: f64::default(),
+            hashrate_24h: f64::default(),
             pending_balance: f64::default(),
             pending_shares: f64::default(),
             round_contribution: f64::default(),
             total_paid: f64::default(),
-            today_paid: f64::default(),
+            paid_24h: f64::default(),
             workers: Vec::default(),
         }
     }
@@ -131,7 +135,7 @@ impl MinerStats {
             .json()
             .await?;
 
-        //Hashrate
+        //hashrate_collection
         if let serde_json::Value::Array(sample_array) = data["performanceSamples"].clone() {
             for sample in sample_array.iter() {
                 let time = sample["created"]
@@ -151,16 +155,9 @@ impl MinerStats {
 
                 hashrate = (hashrate / 10_000.0).round() / 100.0;
 
-                self.hashrate.push_back((hour, hashrate));
+                self.hashrate_collection.push_back((hour, hashrate));
             }
         }
-
-        //Average hashrate last 24h
-        let mut total_hash = 0.0;
-        for hashrate in self.hashrate.iter() {
-            total_hash += hashrate.1;
-        }
-        self.average_hashrate = ((total_hash / self.hashrate.len() as f64) * 100.0).round() / 100.0;
 
         self.pending_balance = data["pendingBalance"]
             .as_f64()
@@ -178,7 +175,8 @@ impl MinerStats {
 
         self.total_paid = data["totalPaid"].as_f64().expect("totalPaid not available");
 
-        self.today_paid = data["todayPaid"].as_f64().expect("todayPaid not available");
+        self.paid_24h =
+            (data["todayPaid"].as_f64().expect("todayPaid not available") * 100.0).round() / 100.0;
 
         for (key, value) in data["performance"]["workers"].clone().as_object().unwrap() {
             self.workers.push(Worker {
@@ -196,6 +194,26 @@ impl MinerStats {
             })
         }
 
+        //Hashrate current
+        let mut hashrate = 0.0;
+        for worker in self.workers.iter() {
+            hashrate += worker.hashrate;
+        }
+        self.hashrate_current = hashrate;
+
+        //Hashrate 6h/24h
+        let mut hashrate = 0.0;
+        let mut itter = 0;
+        for worker in self.hashrate_collection.iter() {
+            hashrate += worker.1;
+            itter += 1;
+
+            match itter {
+                5 => self.hashrate_6h = ((hashrate / 6.0) * 100.0).round() / 100.0,
+                23 => self.hashrate_24h = ((hashrate / 24.0) * 100.0).round() / 100.0,
+                _ => {}
+            }
+        }
         Ok(())
     }
 }
