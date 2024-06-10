@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 mod data;
-use data::get_data;
+use data::{get_data, MinerStats, Stats};
 use dioxus::prelude::*;
 
 use std::thread;
@@ -94,57 +94,106 @@ fn Wallet(address: String) -> Element {
     let address = use_signal(|| address);
     let data = use_resource(move || async move { get_data(address()).await });
 
-    let mut num: u8 = 1;
-    let mut total_hashrate: f64 = 0.0;
-
-    match &*data.read_unchecked() {
-        Some(Ok(stats)) => rsx! {
-            h1 {"Address: {address.clone()}"}
-
-            div { h1 { "Average 24h hashrate: {stats.miner.average_hashrate}"}}
-
-            div { "Miner Hashrate: {stats.miner}"}
-
-
-            div {
-                table {class: "table table-hover",
-
-                        thead {
-                            tr{
-                                th{ scope: "col", "#"}
-                                th{ scope: "col", "Worker Name"}
-                                th{ scope: "col", "Hashrate"}
-                            }
-                       }
-
-                       tbody {
-
-
-                            for worker in stats.miner.workers.iter(){
-                            tr{
-                                th{ scope: "row", "{num}"}
-                                td{"{worker.name}"}
-                                td{"{worker.hashrate} Mh/s"}
-                            }
-                            {num += 1;
-                                total_hashrate += worker.hashrate}
-                            }
-                        }
-                        thead {
-                            tr{
-                                th{ scope: "col", "Total:"}
-                                th{ scope: "col", ""}
-                                th{ scope: "col", "{(total_hashrate * 100.0).round() / 100.0} Mh/s"}
-                            }
-                       }
+    /*
+        pub struct NetworkStats {
+        pub hashrate: VecDeque<(f64, f64)>,
+        pub difficulty: f64,
+        pub height: u64,
+        pub reward: u8,
+        pub reward_reduction: u8,
+        pub price: f64,
+    }
+         */
+    rsx! {    div {class: "container text-strech",
+    div {class:"row align-items-start",
+            div {class: "col",
+                div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                        div {class: "card-title m-2", b {"POOL HASHRATE"}}
+                        p {class:"card-text m-2", "Info"}
                     }
-            }
+            },
+            div {class: "col",
+                div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                        div {class: "card-title m-2", b {"MINERS"}}
+                        p {class:"card-text m-2", "Info"}
+                    }
+            },
+            div {class: "col",
+                div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                        div {class: "card-title m-2", b {"TOTAL BLOCKS"}}
+                        p {class:"card-text m-2", "Info"}
+                    }
+            },
+            div {class: "col",
+                div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                        div {class: "card-title m-2", b {"EFFORT"}}
+                        p {class:"card-text m-2", "Info"}
+                    }
+            },
+
         },
-        Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
-        None => {
-            rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
+
+
+
         }
     }
+
+    // match &*data.read_unchecked() {
+    //     Some(Ok(stats)) => rsx! {
+    //         h1 {"Address: {address.clone()}"}
+
+    //         div { h1 { "Average 24h hashrate: {stats.miner.average_hashrate}"}}
+
+    //         div { "Miner Hashrate: {stats.miner}"}
+
+    //         {WorkerTable(stats.clone())}
+
+    //     },
+    //     Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
+    //     None => {
+    //         rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
+    //     }
+    // }
+}
+
+fn WorkerTable(stats: Stats) -> Element {
+    let mut num: u8 = 1;
+    let mut total_hashrate: f64 = 0.0;
+    rsx!(
+        div {
+            table {class: "table table-hover",
+
+                    thead {
+                        tr{
+                            th{ scope: "col", "#"}
+                            th{ scope: "col", "Worker Name"}
+                            th{ scope: "col", "Hashrate"}
+                        }
+                   }
+
+                   tbody {
+
+
+                        for worker in stats.miner.workers.iter(){
+                        tr{
+                            th{ scope: "row", "{num}"}
+                            td{"{worker.name}"}
+                            td{"{worker.hashrate} Mh/s"}
+                        }
+                        {num += 1;
+                            total_hashrate += worker.hashrate}
+                        }
+                    }
+                    thead {
+                        tr{
+                            th{ scope: "col", "Total:"}
+                            th{ scope: "col", ""}
+                            th{ scope: "col", "{(total_hashrate * 100.0).round() / 100.0} Mh/s"}
+                        }
+                   }
+                }
+        }
+    )
 }
 
 #[component]

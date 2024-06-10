@@ -6,14 +6,14 @@ use std::fmt;
 
 const POOL_API_URL: &str = "http://15.204.211.130:4000/api/pools/ErgoSigmanauts";
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Worker {
     pub name: String,
     pub hashrate: f64,
     pub shares_per_second: f64,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct NetworkStats {
     pub hashrate: VecDeque<(f64, f64)>,
     pub difficulty: f64,
@@ -23,7 +23,7 @@ pub struct NetworkStats {
     pub price: f64,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct PoolStats {
     pub hashrate: VecDeque<(f64, f64)>,
     pub connected_miners: u64,
@@ -32,7 +32,7 @@ pub struct PoolStats {
     pub confirming_new_block: f64,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct MinerStats {
     pub hashrate: VecDeque<(u32, f64)>,
     pub average_hashrate: f64,
@@ -44,7 +44,7 @@ pub struct MinerStats {
     pub workers: Vec<Worker>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Stats {
     pub network: NetworkStats,
     pub pool: PoolStats,
