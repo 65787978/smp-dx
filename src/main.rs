@@ -149,8 +149,9 @@ fn NavBar() -> Element {
 
             div { class: "container-fluid",
 
+            button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation", span{class:"navbar-toggler-icon"}}
 
-                div {class: "collapse navbar-collapse d-lg-flex",
+                div {class: "collapse navbar-collapse d-lg-flex", id:"navbar",
 
                         a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
 
