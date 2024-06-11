@@ -117,8 +117,8 @@ impl PoolStats {
     }
 
     pub async fn provide_data(&mut self) -> Result<(), reqwest::Error> {
-        self.fetch_data();
-        self.calculate_data();
+        self.fetch_data().await.unwrap();
+        self.calculate_data().await.unwrap();
         Ok(())
     }
 
