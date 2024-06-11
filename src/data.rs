@@ -5,6 +5,8 @@ use std::collections::VecDeque;
 use std::fmt;
 
 const POOL_API_URL: &str = "http://15.204.211.130:4000/api/pools/ErgoSigmanauts";
+const NETWORK_API_URL: &str = "https://api.ergoplatform.com/info";
+const PRICE_API_URL: &str = "https://api.spectrum.fi/v1/price-tracking/cmc/markets";
 
 #[derive(Debug, Default, Clone)]
 pub struct Worker {
@@ -15,7 +17,7 @@ pub struct Worker {
 
 #[derive(Debug, Default, Clone)]
 pub struct NetworkStats {
-    pub hashrate: VecDeque<(f64, f64)>,
+    pub hashrate: f64,
     pub difficulty: f64,
     pub height: u64,
     pub reward: u8,
@@ -25,7 +27,8 @@ pub struct NetworkStats {
 
 #[derive(Debug, Default, Clone)]
 pub struct PoolStats {
-    pub hashrate: VecDeque<(f64, f64)>,
+    pub data: serde_json::Value,
+    pub hashrate: f64,
     pub connected_miners: u64,
     pub effort: f64,
     pub total_blocks: u64,
@@ -78,6 +81,7 @@ pub async fn get_data(address: String) -> Result<Stats, reqwest::Error> {
     let mut pool_stats = PoolStats::default().await;
     let mut miner_stats = MinerStats::default(address).await;
 
+    pool_stats.provide_data().await.unwrap();
     miner_stats.provide_data().await.unwrap();
 
     Ok(Stats {
@@ -90,7 +94,7 @@ pub async fn get_data(address: String) -> Result<Stats, reqwest::Error> {
 impl NetworkStats {
     pub async fn default() -> Self {
         NetworkStats {
-            hashrate: VecDeque::default(),
+            hashrate: f64::default(),
             difficulty: f64::default(),
             height: u64::default(),
             reward: u8::default(),
@@ -103,12 +107,77 @@ impl NetworkStats {
 impl PoolStats {
     pub async fn default() -> PoolStats {
         PoolStats {
-            hashrate: VecDeque::default(),
+            data: serde_json::Value::default(),
+            hashrate: f64::default(),
             connected_miners: u64::default(),
             effort: f64::default(),
             total_blocks: u64::default(),
             confirming_new_block: f64::default(),
         }
+    }
+
+    pub async fn provide_data(&mut self) -> Result<(), reqwest::Error> {
+        self.fetch_data();
+        self.calculate_data();
+        Ok(())
+    }
+
+    async fn fetch_data(&mut self) -> Result<(), reqwest::Error> {
+        self.data = Client::new().get(POOL_API_URL).send().await?.json().await?;
+        Ok(())
+    }
+
+    async fn calculate_data(&mut self) -> Result<(), reqwest::Error> {
+        /* Hashrate */
+        self.hashrate = (self.data["pool"]["poolStats"]["poolHashrate"]
+            .clone()
+            .as_f64()
+            .expect("no pool hashrate available")
+            / 10_000_000.0)
+            .round()
+            / 100.0;
+
+        /* Connected Miners */
+        self.connected_miners = self.data["pool"]["poolStats"]["connectedMiners"]
+            .clone()
+            .as_u64()
+            .expect("connected miners not available");
+
+        /* Pool effort */
+        self.effort = (self.data["pool"]["poolEffort"]
+            .clone()
+            .as_f64()
+            .expect("pool effort not available")
+            * 10000.0)
+            .round()
+            / 100.0;
+
+        /* Total Blocks */
+        self.total_blocks = self.data["pool"]["totalBlocks"]
+            .clone()
+            .as_u64()
+            .expect("total blocks data not available");
+
+        /* New block confirmation */
+        let block_data: serde_json::Value = Client::new()
+            .get(format!("{}/blocks", POOL_API_URL))
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        let pool_block_confirmation: (&str, f64) = (
+            block_data[0]["status"].as_str().unwrap(),
+            (block_data[0]["confirmationProgress"].as_f64().unwrap()) * 100.0,
+        );
+
+        if pool_block_confirmation.0 == "pending" {
+            self.confirming_new_block = pool_block_confirmation.1;
+        } else {
+            self.confirming_new_block = 100.0;
+        }
+
+        Ok(())
     }
 }
 

@@ -1,4 +1,5 @@
-/*    let pool_api_url = "http://15.204.211.130:4000/api/pools/ErgoSigmanauts";
+fn main() {
+    let pool_api_url = "http://15.204.211.130:4000/api/pools/ErgoSigmanauts";
     let price_api_url = "https://api.spectrum.fi/v1/price-tracking/cmc/markets";
     let hashrate_api = "https://api.ergoplatform.com/info";
 
@@ -64,7 +65,6 @@
         }
 
         // ERG Price
-
         if let serde_json::Value::Array(arr) = price_data {
             for obj in arr {
                 if let serde_json::Value::Object(o) = obj {
@@ -157,10 +157,4 @@
             stats.pool.confirming_new_block = 100.0;
         }
     }
-
-    //Store only the last 720 blocks (720 * 2min = 24h)
-    if stats.network.hashrate.len() > 720 {
-        stats.network.hashrate.pop_front();
-        stats.pool.hashrate.pop_front();
-    }
-}*/
+}
