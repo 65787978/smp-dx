@@ -34,6 +34,8 @@ pub struct PoolStats {
 
 #[derive(Debug, Default, Clone)]
 pub struct MinerStats {
+    pub data: serde_json::Value,
+    pub address: String,
     pub hashrate_collection: VecDeque<(u32, f64)>,
     pub hashrate_current: f64,
     pub hashrate_6h: f64,
@@ -74,9 +76,9 @@ impl fmt::Display for MinerStats {
 pub async fn get_data(address: String) -> Result<Stats, reqwest::Error> {
     let mut network_stats = NetworkStats::default().await;
     let mut pool_stats = PoolStats::default().await;
-    let mut miner_stats = MinerStats::default().await;
+    let mut miner_stats = MinerStats::default(address).await;
 
-    miner_stats.get_data(address).await.unwrap();
+    miner_stats.provide_data().await.unwrap();
 
     Ok(Stats {
         network: network_stats,
@@ -109,9 +111,12 @@ impl PoolStats {
         }
     }
 }
+
 impl MinerStats {
-    pub async fn default() -> Self {
+    pub async fn default(address: String) -> Self {
         MinerStats {
+            data: serde_json::Value::default(),
+            address: address,
             hashrate_collection: VecDeque::default(),
             hashrate_current: f64::default(),
             hashrate_6h: f64::default(),
@@ -124,19 +129,32 @@ impl MinerStats {
             workers: Vec::default(),
         }
     }
+    pub async fn provide_data(&mut self) -> Result<(), reqwest::Error> {
+        self.fetch_data().await.unwrap();
+        self.calculate_hashrate_collection().await.unwrap();
+        self.calculate_balance_shares_totalpaid_paid24h()
+            .await
+            .unwrap();
+        self.calculate_workers().await.unwrap();
+        self.calculate_hashrate().await.unwrap();
+        Ok(())
+    }
 
-    pub async fn get_data(&mut self, address: String) -> Result<(), reqwest::Error> {
-        let miner_api_url = format!("{}/{}/{}", POOL_API_URL, "miners", address);
+    async fn fetch_data(&mut self) -> Result<(), reqwest::Error> {
+        let miner_api_url = format!("{}/{}/{}", POOL_API_URL, "miners", self.address);
 
-        let data: serde_json::Value = Client::new()
+        self.data = Client::new()
             .get(miner_api_url)
             .send()
             .await?
             .json()
             .await?;
+        Ok(())
+    }
 
+    async fn calculate_hashrate_collection(&mut self) -> Result<(), reqwest::Error> {
         //hashrate_collection
-        if let serde_json::Value::Array(sample_array) = data["performanceSamples"].clone() {
+        if let serde_json::Value::Array(sample_array) = self.data["performanceSamples"].clone() {
             for sample in sample_array.iter() {
                 let time = sample["created"]
                     .as_str()
@@ -158,27 +176,40 @@ impl MinerStats {
                 self.hashrate_collection.push_back((hour, hashrate));
             }
         }
+        Ok(())
+    }
 
-        self.pending_balance = data["pendingBalance"]
+    async fn calculate_balance_shares_totalpaid_paid24h(&mut self) -> Result<(), reqwest::Error> {
+        self.pending_balance = self.data["pendingBalance"]
             .as_f64()
             .expect("pendingBalance not available");
 
-        self.pending_shares = data["pendingShares"]
+        self.pending_shares = self.data["pendingShares"]
             .as_f64()
             .expect("pendingShares not available");
 
-        // Round contribution
+        // Round contribution TODO!
 
-        self.pending_balance = data["pendingBalance"]
+        self.total_paid = self.data["totalPaid"]
             .as_f64()
-            .expect("pendingBalance not available");
+            .expect("totalPaid not available");
 
-        self.total_paid = data["totalPaid"].as_f64().expect("totalPaid not available");
+        self.paid_24h = (self.data["todayPaid"]
+            .as_f64()
+            .expect("todayPaid not available")
+            * 100.0)
+            .round()
+            / 100.0;
 
-        self.paid_24h =
-            (data["todayPaid"].as_f64().expect("todayPaid not available") * 100.0).round() / 100.0;
+        Ok(())
+    }
 
-        for (key, value) in data["performance"]["workers"].clone().as_object().unwrap() {
+    async fn calculate_workers(&mut self) -> Result<(), reqwest::Error> {
+        for (key, value) in self.data["performance"]["workers"]
+            .clone()
+            .as_object()
+            .unwrap()
+        {
             self.workers.push(Worker {
                 name: key.to_string(),
                 hashrate: ((value["hashrate"]
@@ -193,7 +224,10 @@ impl MinerStats {
                     .expect("failed to load worker shares per second"),
             })
         }
+        Ok(())
+    }
 
+    async fn calculate_hashrate(&mut self) -> Result<(), reqwest::Error> {
         //Hashrate current
         let mut hashrate = 0.0;
         for worker in self.workers.iter() {
