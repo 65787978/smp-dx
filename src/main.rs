@@ -109,7 +109,7 @@ fn Wallet(address: String) -> Element {
                         div {class: "col",
                             div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
                                     div {class: "card-title m-2", b {"POOL HASHRATE"}}
-                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.hashrate.back().unwrap_or(&(0.0, 0.0)).1} Gh/s"}}
+                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.hashrate Gh/s"}}
 
                                 }
                         },
