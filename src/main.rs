@@ -3,8 +3,10 @@ mod data;
 use data::{get_data, MinerStats, Stats};
 use dioxus::prelude::*;
 
+use gloo::timers::future::TimeoutFuture;
 use std::thread;
 use std::time::Duration;
+
 use tracing::Level;
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
@@ -92,7 +94,14 @@ fn Home() -> Element {
 #[component]
 fn Wallet(address: String) -> Element {
     let address = use_signal(|| address);
-    let data = use_resource(move || async move { get_data(address()).await });
+    let mut data = use_resource(move || async move { get_data(address()).await });
+
+    use_future(move || async move {
+        loop {
+            TimeoutFuture::new(10000).await;
+            data.restart();
+        }
+    });
 
     match &*data.read_unchecked() {
         Some(Ok(stats)) => rsx! {
