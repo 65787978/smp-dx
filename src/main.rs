@@ -94,12 +94,20 @@ fn Home() -> Element {
 #[component]
 fn Wallet(address: String) -> Element {
     let address = use_signal(|| address);
+    let mut refresh_counter = use_signal(|| 60 as u8);
+    let mut refresh_counter_toggle = use_signal(|| true);
     let mut data = use_resource(move || async move { get_data(address()).await });
 
     use_future(move || async move {
         loop {
-            TimeoutFuture::new(10000).await;
-            data.restart();
+            TimeoutFuture::new(1000).await;
+            if refresh_counter_toggle() {
+                refresh_counter -= 1;
+                if refresh_counter() == 0 {
+                    data.restart();
+                    refresh_counter.set(60);
+                }
+            }
         }
     });
 
@@ -110,7 +118,36 @@ fn Wallet(address: String) -> Element {
                 div {class:"row align-items-start",
                     div {class:"col",
                         div {class:"card text-bg-light m-2", style:"min-width: 30rem; min-height: 3rem;",
-                            div {class:"card-title m-2", b {"{address.clone()}"}}
+                            div {class:"card-title m-2",
+                                div {class:"row",
+                                    div{class:"col", b {"{address.clone()}"}},
+                                    div{class:"col-auto",
+                                        div{class:"row",
+                                            div {class:"col",
+                                                div {class:"row",
+                                                    div {class:"col-auto", label{class:"form-check-label", "for":"flexSwitchCheckChecked", "Update in: {refresh_counter}"}}
+                                                    div {class:"col-auto",
+                                                        div {class:"form-check form-switch",
+                                                            input {class:"form-check-input", "type":"checkbox", role:"switch", id:"flexSwitchCheckChecked",
+                                                                onclick: move |_| {
+                                                                    if refresh_counter_toggle() {
+                                                                        refresh_counter_toggle.set(false);
+                                                                        refresh_counter.set(60);
+                                                                    } else
+                                                                    {
+                                                                        refresh_counter_toggle.set(true);
+                                                                        data.restart();
+                                                                    }
+                                                                } , checked:"{refresh_counter_toggle}"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
