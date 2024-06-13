@@ -98,6 +98,7 @@ fn Wallet(address: String) -> Element {
     let mut refresh_counter_toggle = use_signal(|| true);
     let mut data = use_resource(move || async move { get_data(address()).await });
 
+    /* Auto update data in background every 1000msecs */
     use_future(move || async move {
         loop {
             TimeoutFuture::new(1000).await;
@@ -153,28 +154,35 @@ fn Wallet(address: String) -> Element {
                 }
                 div {class:"row align-items-start",
                         div {class: "col",
-                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"POOL HASHRATE"}}
                                     div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.hashrate} Gh/s"}}
 
                                 }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
+                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"MINERS"}}
                                     div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.connected_miners}"}}
                                 }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
-                                    div {class: "card-title m-2", b {"TOTAL BLOCKS"}}
+                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
+                                    div {class: "card-title m-2", b {"LUCK"}}
                                     div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.total_blocks}"}}
                                 }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 8rem;",
-                                    div {class: "card-title m-2", b {"EFFORT"}}
-                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.effort}%"}}
+                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
+                                    div {class: "card-title m-2", b {"CURRENT"}}
+                                    div {class:"row",
+                                        div {class:"col",
+                                            div {class:"card-body", h5 {class:"card-text", "{stats.pool.effort}%"}, p {class:"card-text", "Pool Effort"}}
+                                        }
+                                        div {class:"col",
+                                            div {class:"card-body", h5 {class:"card-text", "{stats.miner.round_contribution}%"}, p {class:"card-text", "Participation"}}
+                                        }
+                                    }
                                 }
                         },
                     },
