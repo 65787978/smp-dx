@@ -152,12 +152,19 @@ fn Wallet(address: String) -> Element {
                         }
                     }
                 }
+
                 div {class:"row align-items-start",
                         div {class: "col",
                             div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
-                                    div {class: "card-title m-2", b {"POOL HASHRATE"}}
-                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.hashrate} Gh/s"}}
-
+                                    div {class: "card-title m-2", b {"HASHRATE"}}
+                                    div {class:"row",
+                                        div {class:"col",
+                                            div {class:"card-body", h5 {class:"card-text", "{stats.network.hashrate} Th/s"}, p {class:"card-text", "Network"}}
+                                        }
+                                        div {class:"col",
+                                            div {class:"card-body", h5 {class:"card-text", "{stats.pool.hashrate} Gh/s"}, p {class:"card-text", "Pool"}}
+                                        }
+                                    }
                                 }
                         },
                         div {class: "col",
@@ -168,7 +175,7 @@ fn Wallet(address: String) -> Element {
                         },
                         div {class: "col",
                             div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
-                                    div {class: "card-title m-2", b {"LUCK"}}
+                                    div {class: "card-title m-2", b {"TOTAL BLOCKS"}}
                                     div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.total_blocks}"}}
                                 }
                         },
@@ -186,10 +193,11 @@ fn Wallet(address: String) -> Element {
                                 }
                         },
                     },
+
                 div {class:"row align-items-start",
                     div {class:"col",
                         div {class:"card text-bg-light m-2", style:"min-width: 30rem; min-height: 8rem;",
-                            div {class:"card-title m-2", b {"HASHRATE"}}
+                            div {class:"card-title m-2", b {"MINER HASHRATE"}}
                             div {class:"row justify-content-center",
                                 div {class: "col",
                                         div {class:"card-body",
