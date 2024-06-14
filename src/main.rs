@@ -118,7 +118,7 @@ fn Wallet(address: String) -> Element {
             div {class: "container text-begin",
                 div {class:"row align-items-start",
                     div {class:"col",
-                        div {class:"card text-bg-light m-2", style:"min-width: 30rem; min-height: 3rem;",
+                        div {class:"card text-bg-light m-1 mt-2", style:"min-width: 30rem; min-height: 3rem;",
                             div {class:"card-title m-2",
                                 div {class:"row",
                                     div{class:"col", b {"{address.clone()}"}},
@@ -155,7 +155,7 @@ fn Wallet(address: String) -> Element {
 
                 div {class:"row align-items-start",
                         div {class: "col",
-                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
+                            div {class:"card text-bg-light m-1", style:"min-width: 12rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"HASHRATE"}}
                                     div {class:"row",
                                         div {class:"col",
@@ -168,19 +168,26 @@ fn Wallet(address: String) -> Element {
                                 }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
+                            div {class:"card text-bg-light m-1", style:"min-width: 12rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"MINERS"}}
                                     div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.connected_miners}"}}
                                 }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
-                                    div {class: "card-title m-2", b {"TOTAL BLOCKS"}}
-                                    div {class:"card-body", h4 {class:"card-text m-2", "{stats.pool.total_blocks}"}}
-                                }
+                            div {class:"card text-bg-light m-1", style:"min-width: 12rem; min-height: 9rem;",
+                                    div {class: "card-title m-2", b {"BLOCK"}}
+                                    div {class:"row",
+                                        div {class:"col",
+                                            div {class:"card-body", h5 {class:"card-text", "{stats.network.reward} Σ"}, p {class:"card-text", "Reward"}}
+                                        }
+                                        div {class:"col",
+                                            div {class:"card-body", h5 {class:"card-text", "${stats.network.price}"}, p {class:"card-text", "ERG / SigUSD"}}
+                                        }
+                                    }
+                            }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-2", style:"min-width: 10rem; min-height: 9rem;",
+                            div {class:"card text-bg-light m-1", style:"min-width: 12rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"CURRENT"}}
                                     div {class:"row",
                                         div {class:"col",
@@ -196,7 +203,7 @@ fn Wallet(address: String) -> Element {
 
                 div {class:"row align-items-start",
                     div {class:"col",
-                        div {class:"card text-bg-light m-2", style:"min-width: 30rem; min-height: 8rem;",
+                        div {class:"card text-bg-light m-1", style:"min-width: 30rem; min-height: 8rem;",
                             div {class:"card-title m-2", b {"MINER STATS"}}
                             div {class:"row justify-content-center",
                                 div {class: "col",
@@ -242,7 +249,7 @@ fn Chart() -> Element {
     rsx!(
         div {class:"row justify-content-center",
         div {class:"col",
-                        div {class:"card text-bg-light m-2", style:"min-width: 30rem; min-height: 24rem;",
+                        div {class:"card text-bg-light m-1", style:"min-width: 30rem; min-height: 24rem;",
                             div {class:"card-title m-2", b {"Chart"}
                         }
                     }
@@ -255,7 +262,7 @@ fn WorkerTable(stats: Stats) -> Element {
     let mut active_workers: u8 = 1;
     let mut total_hashrate: f64 = 0.0;
     rsx!(
-        div {
+        div { class:"mt-3 ms-1",
             h3 {" Active workers: {stats.miner.workers.len()}"}
             table {class: "table table-hover",
 

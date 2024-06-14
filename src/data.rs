@@ -1,6 +1,6 @@
 use chrono::{round, DateTime, TimeZone, Timelike, Utc};
 use dioxus::prelude::SuperInto;
-use reqwest::{self, Client};
+use reqwest::{self, get, Client};
 use std::collections::VecDeque;
 use std::fmt;
 
@@ -20,7 +20,7 @@ pub struct NetworkStats {
     pub hashrate: f64,
     pub difficulty: f64,
     pub height: u64,
-    pub reward: u8,
+    pub reward: f64,
     pub reward_reduction: u8,
     pub price: f64,
 }
@@ -81,8 +81,14 @@ pub async fn get_data(address: String) -> Result<Stats, reqwest::Error> {
     let mut pool_stats = PoolStats::default().await;
     let mut miner_stats = MinerStats::default(address).await;
 
-    // pool_stats.provide_data().await.unwrap();
-    // miner_stats.provide_data().await.unwrap();
+    network_stats.provide_data().await.unwrap();
+    pool_stats.provide_data().await.unwrap();
+    miner_stats.provide_data().await.unwrap();
+
+    //participation
+    miner_stats.round_contribution =
+        ((miner_stats.hashrate_current / (pool_stats.hashrate * 1_000.0)) * 10000.0).round()
+            / 100.0;
 
     Ok(Stats {
         network: network_stats,
@@ -97,10 +103,87 @@ impl NetworkStats {
             hashrate: f64::default(),
             difficulty: f64::default(),
             height: u64::default(),
-            reward: u8::default(),
+            reward: f64::default(),
             reward_reduction: u8::default(),
             price: f64::default(),
         }
+    }
+
+    pub async fn provide_data(&mut self) -> Result<(), reqwest::Error> {
+        let hashrate_data: serde_json::Value = Client::new()
+            .get(NETWORK_API_URL)
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        let info_data: serde_json::Value =
+            Client::new().get(POOL_API_URL).send().await?.json().await?;
+
+        let price_data: serde_json::Value = Client::new()
+            .get(PRICE_API_URL)
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        self.hashrate = (hashrate_data["hashRate"]
+            .clone()
+            .as_f64()
+            .expect(" network hashrate not awailable")
+            / 10_000_000_000.0)
+            .round()
+            / 100.0;
+
+        self.difficulty = (info_data["pool"]["networkStats"]["networkDifficulty"]
+            .clone()
+            .as_f64()
+            .expect("network diff not avialable")
+            / 10_0000_000_000_000.0)
+            .round()
+            / 100.0;
+
+        self.height = info_data["pool"]["networkStats"]["blockHeight"]
+            .clone()
+            .as_u64()
+            .expect("block height not available");
+
+        // ERG Price
+        if let serde_json::Value::Array(arr) = price_data {
+            for obj in arr {
+                if let serde_json::Value::Object(o) = obj {
+                    if let Some(base_name) = o.get("base_name") {
+                        if base_name == "ERG" {
+                            if let Some(quote_name) = o.get("quote_name") {
+                                if quote_name == "SigUSD" {
+                                    if let Some(last_price) = o.get("last_price") {
+                                        if let Some(price) = last_price.as_f64() {
+                                            self.price = ((1.0 / price) * 100.0).round() / 100.0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        self.get_block_reward().await.unwrap();
+
+        Ok(())
+    }
+
+    async fn get_block_reward(&mut self) -> Result<(), reqwest::Error> {
+        let block_data: serde_json::Value = Client::new()
+            .get(format!("{}/blocks", POOL_API_URL))
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        self.reward = block_data[0]["reward"].as_f64().unwrap().round();
+        Ok(())
     }
 }
 
@@ -166,9 +249,10 @@ impl PoolStats {
             .json()
             .await?;
 
-        let pool_block_confirmation: (&str, f64) = (
+        let pool_block_confirmation: (&str, f64, f64) = (
             block_data[0]["status"].as_str().unwrap(),
             (block_data[0]["confirmationProgress"].as_f64().unwrap()) * 100.0,
+            block_data[0]["reward"].as_f64().unwrap().round(),
         );
 
         if pool_block_confirmation.0 == "pending" {
