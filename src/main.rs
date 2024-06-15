@@ -41,7 +41,7 @@ fn App() -> Element {
 
 #[component]
 fn Home() -> Element {
-    let mut address = use_signal(|| "".to_string());
+    // let mut address = use_signal(|| "".to_string());
     // let mut data = use_resource(move || async move { get_data().await });
 
     // match &*data.read_unchecked() {
@@ -78,14 +78,14 @@ fn Home() -> Element {
     //     }
     // }
     rsx! {
-            div {class:"alert alert-primary", role: "alert",
+        //     div {class:"alert alert-primary", role: "alert",
 
-                        div {class: "row align-items-center",
-                            div {class: "col", width: "80%", input {class: "form-control form-control-lg", placeholder:"Enter your mining address here...",  oninput: move |input| address.set(input.value())}}
-                            div {class: "col-auto", Link {class: "btn btn-primary", to: Route::Wallet { address: address() }, "Search"}}
+        //                 div {class: "row align-items-center",
+        //                     div {class: "col", width: "80%", input {class: "form-control form-control-lg", placeholder:"Enter your mining address here...",  oninput: move |input| address.set(input.value())}}
+        //                     div {class: "col-auto", Link {class: "btn btn-primary", to: Route::Wallet { address: address() }, "Search"}}
 
-                        }
-        }
+        //                 }
+        // }
     }
 }
 
@@ -306,6 +306,7 @@ fn WorkerTable(stats: Stats) -> Element {
 
 #[component]
 fn NavBar() -> Element {
+    let mut address = use_signal(|| "".to_string());
     rsx! {
         nav { class: "navbar navbar-expand-lg bg-body-tertiary rounded",
 
@@ -326,6 +327,14 @@ fn NavBar() -> Element {
                             li {class: "nav-item", a{ class: "nav-link", href: "https://discord.com/channels/668903786361651200/1153460448214122526", "Support"}}
 
                             }
+
+                        form {role:"search",
+                            div {class: "row align-items-center",
+                                div {class: "col", width: "80%", input {class: "form-control form-control-lg", placeholder:"Search mining address",  oninput: move |input| address.set(input.value())}}
+                                div {class:"col-auto", a {class:"btn btn-primary", href:"/wallet/{address()}","Search"} }
+                            }
+
+                        }
                     }
 
             }}
