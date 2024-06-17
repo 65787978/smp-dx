@@ -1,7 +1,7 @@
 [application]
 
 # App (Project) Name
-name = "smp-dx"
+name = "SigmanautsMiningPool"
 
 # Dioxus App Default Platform
 # desktop, web
@@ -16,7 +16,7 @@ asset_dir = "assets"
 [web.app]
 
 # HTML title tag content
-title = "smp-dx"
+title = "Sigmanauts Mining Pool"
 
 [web.watcher]
 
