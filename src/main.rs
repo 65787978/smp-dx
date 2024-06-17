@@ -344,41 +344,46 @@ fn WorkerTable(stats: Stats) -> Element {
 fn NavBar() -> Element {
     let mut address = use_signal(|| "".to_string());
     rsx! {
-            nav { class: "navbar navbar-expand-lg bg-body-tertiary rounded",
+    nav { class: "navbar navbar-expand-lg bg-body-tertiary rounded",
 
-                div { class: "container-fluid",
+        div { class: "container-fluid",
 
-                button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation",
-                        span{class:"navbar-toggler-icon"}
+        button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation",
+                span{class:"navbar-toggler-icon"}
+            }
+
+            div {class: "collapse navbar-collapse d-lg-flex", id:"navbar",
+
+                    a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
+
+                    ul {class: "navbar-nav col-lg-6 justify-content-lg-center",
+                        li {class: "nav-item", a{ class: "nav-link", href: "/", "Blocks"}}
+                        li {class: "nav-item", a{ class: "nav-link", href: "https://discord.com/channels/668903786361651200/1153460448214122526", "Support"}}
+                        li {class: "nav-item",
+                            a { class: "btn btn-outline-secondary mb-1", href: "https://explorer.ergoplatform.com/payment-request?address=9fFzKA2WHNYyXZWc4MHPtSv6YqS8jtDsZkSnAQwVaAZrYn9ojEA", "Donate",
+                                svg {
+                                    xmlns:"http://www.w3.org/2000/svg",width:"18", height:"18", fill:"currentColor", class:"bi bi-suit-heart-fill ms-2", "viewBox":"0 0 16 16",
+                                    path { d:"M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1"}}
+                            }
+                        }
                     }
 
-                    div {class: "collapse navbar-collapse d-lg-flex", id:"navbar",
-
-                            a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
-
-                            ul {class: "navbar-nav col-lg-6 justify-content-lg-center",
-                                li {class: "nav-item", a{ class: "nav-link", href: "/", "Blocks"}}
-                                li {class: "nav-item", a{ class: "nav-link", href: "https://discord.com/channels/668903786361651200/1153460448214122526", "Support"}}
-                                li {class: "nav-item", a{ class: "btn btn-outline-secondary mb-1", href: "https://explorer.ergoplatform.com/payment-request?address=9fFzKA2WHNYyXZWc4MHPtSv6YqS8jtDsZkSnAQwVaAZrYn9ojEA", "Donate"}}
-
-                                }
-    // "/wallet/{address()}"
-                            form {role:"search",  action:"/wallet/{address()}",
-                                div {class: "col-auto",
-                                    input {class: "form-control", placeholder:"Search mining address", minlength: 51, maxlength: 51, oninput: move |input| address.set(input.value())}
-                                }
-                            }
+                    form {role:"search",  action:"/wallet/{address()}",
+                        div {class: "col-auto",
+                            input {class: "form-control", placeholder:"Search mining address", minlength: 51, maxlength: 51, oninput: move |input| address.set(input.value())}
                         }
                     }
                 }
             }
+        }
+    }
 }
 
 #[component]
 fn Footer() -> Element {
     rsx! {
 
-    footer {class: "footer mt-auto py-3 bg-body-tertiary fixed-bottom",
+    footer {class: "footer mt-auto py-1 bg-body-tertiary fixed-bottom",
         div {class:"container text-center",
                 div{class:"row",
                     div {class:"col",

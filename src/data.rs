@@ -80,9 +80,9 @@ pub async fn get_data(address: String) -> Result<Stats, reqwest::Error> {
     let mut pool_stats = PoolStats::default().await;
     let mut miner_stats = MinerStats::default(address).await;
 
-    // network_stats.provide_data().await.unwrap();
-    // pool_stats.provide_data().await.unwrap();
-    // miner_stats.provide_data().await.unwrap();
+    network_stats.provide_data().await.unwrap();
+    pool_stats.provide_data().await.unwrap();
+    miner_stats.provide_data().await.unwrap();
 
     //participation
     miner_stats.round_contribution =
