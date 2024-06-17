@@ -1,10 +1,10 @@
 #![allow(non_snake_case)]
 mod data;
+
 use data::{get_data, Stats};
 use dioxus::prelude::*;
-
-use gloo::timers::future::TimeoutFuture;
-
+use dioxus_elements::a;
+use gloo::{timers::future::TimeoutFuture, utils::window};
 use tracing::Level;
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
@@ -96,7 +96,7 @@ fn Home() -> Element {
                                         }
                                         div {class:"col",
                                             p {"Pool hashrate: {var.pool.hashrate} Gh/s"}
-                                            p {"Pool total blocks: {var.pool.total_blocks}"}
+                                            p {"Pool blocks mined: {var.pool.total_blocks}"}
                                             p {"Pool miners: {var.pool.connected_miners}"}
                                         }
                                     }
@@ -344,36 +344,34 @@ fn WorkerTable(stats: Stats) -> Element {
 fn NavBar() -> Element {
     let mut address = use_signal(|| "".to_string());
     rsx! {
-        nav { class: "navbar navbar-expand-lg bg-body-tertiary rounded",
+            nav { class: "navbar navbar-expand-lg bg-body-tertiary rounded",
 
-            div { class: "container-fluid",
+                div { class: "container-fluid",
 
-            button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation",
-                    span{class:"navbar-toggler-icon"}
-                }
-
-                div {class: "collapse navbar-collapse d-lg-flex", id:"navbar",
-
-                        a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
-
-                        ul {class: "navbar-nav col-lg-6 justify-content-lg-center",
-                            li {class: "nav-item", a{ class: "nav-link", href: "/", "Blocks"}}
-                            li {class: "nav-item", a{ class: "nav-link", href: "https://discord.com/channels/668903786361651200/1153460448214122526", "Support"}}
-                            li {class: "nav-item", a{ class: "btn btn-outline-secondary mb-1", href: "/donations", "Donations"}}
-
-                            }
-
-                        form {role:"search",
-                            div {class: "row align-items-center",
-                                div {class: "col", width: "80%", input {class: "form-control form-control-lg", placeholder:"Search mining address",  oninput: move |input| address.set(input.value())}}
-                                div {class:"col-auto", a {class:"btn btn-outline-primary", href:"/wallet/{address()}","Search"} }
-                            }
-
-                        }
+                button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation",
+                        span{class:"navbar-toggler-icon"}
                     }
 
-            }}
-    }
+                    div {class: "collapse navbar-collapse d-lg-flex", id:"navbar",
+
+                            a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
+
+                            ul {class: "navbar-nav col-lg-6 justify-content-lg-center",
+                                li {class: "nav-item", a{ class: "nav-link", href: "/", "Blocks"}}
+                                li {class: "nav-item", a{ class: "nav-link", href: "https://discord.com/channels/668903786361651200/1153460448214122526", "Support"}}
+                                li {class: "nav-item", a{ class: "btn btn-outline-secondary mb-1", href: "https://explorer.ergoplatform.com/payment-request?address=9fFzKA2WHNYyXZWc4MHPtSv6YqS8jtDsZkSnAQwVaAZrYn9ojEA", "Donate"}}
+
+                                }
+    // "/wallet/{address()}"
+                            form {role:"search",  action:"/wallet/{address()}",
+                                div {class: "col-auto",
+                                    input {class: "form-control", placeholder:"Search mining address", minlength: 51, maxlength: 51, oninput: move |input| address.set(input.value())}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 }
 
 #[component]
