@@ -41,6 +41,7 @@ pub struct MinerStats {
     pub hashrate_collection: VecDeque<(u32, f64)>,
     pub hashrate_current: f64,
     pub hashrate_6h: f64,
+    pub hashrate_12h: f64,
     pub hashrate_24h: f64,
     pub pending_shares: f64,
     pub pending_balance: f64,
@@ -83,6 +84,28 @@ pub async fn get_data(address: String) -> Result<Stats, reqwest::Error> {
     network_stats.provide_data().await.unwrap();
     pool_stats.provide_data().await.unwrap();
     miner_stats.provide_data().await.unwrap();
+
+    //participation
+    miner_stats.round_contribution =
+        ((miner_stats.hashrate_current / (pool_stats.hashrate * 1_000.0)) * 10000.0).round()
+            / 100.0;
+
+    Ok(Stats {
+        network: network_stats,
+        pool: pool_stats,
+        miner: miner_stats,
+    })
+}
+
+/// Get data from Mining Core API
+pub async fn get_landing_page_data(address: String) -> Result<Stats, reqwest::Error> {
+    let mut network_stats = NetworkStats::default().await;
+    let mut pool_stats = PoolStats::default().await;
+    let mut miner_stats = MinerStats::default(address).await;
+
+    network_stats.provide_data().await.unwrap();
+    pool_stats.provide_data().await.unwrap();
+    // miner_stats.provide_data().await.unwrap();
 
     //participation
     miner_stats.round_contribution =
@@ -272,6 +295,7 @@ impl MinerStats {
             hashrate_collection: VecDeque::default(),
             hashrate_current: f64::default(),
             hashrate_6h: f64::default(),
+            hashrate_12h: f64::default(),
             hashrate_24h: f64::default(),
             pending_balance: f64::default(),
             pending_shares: f64::default(),
@@ -332,9 +356,12 @@ impl MinerStats {
     }
 
     async fn calculate_balance_shares_totalpaid_paid24h(&mut self) -> Result<(), reqwest::Error> {
-        self.pending_balance = self.data["pendingBalance"]
+        self.pending_balance = (self.data["pendingBalance"]
             .as_f64()
-            .expect("pendingBalance not available");
+            .expect("pendingBalance not available")
+            * 100.0)
+            .round()
+            / 100.0;
 
         self.pending_shares = self.data["pendingShares"]
             .as_f64()
@@ -342,9 +369,12 @@ impl MinerStats {
 
         // Round contribution TODO!
 
-        self.total_paid = self.data["totalPaid"]
+        self.total_paid = (self.data["totalPaid"]
             .as_f64()
-            .expect("totalPaid not available");
+            .expect("totalPaid not available")
+            * 100.0)
+            .round()
+            / 100.0;
 
         self.paid_24h = (self.data["todayPaid"]
             .as_f64()
@@ -395,6 +425,7 @@ impl MinerStats {
 
             match itter {
                 5 => self.hashrate_6h = ((hashrate / 6.0) * 100.0).round() / 100.0,
+                11 => self.hashrate_12h = ((hashrate / 12.0) * 100.0).round() / 100.0,
                 23 => self.hashrate_24h = ((hashrate / 24.0) * 100.0).round() / 100.0,
                 _ => {}
             }

@@ -1,10 +1,9 @@
 #![allow(non_snake_case)]
 mod data;
 
-use data::{get_data, Stats};
+use data::{get_data, get_landing_page_data, Stats};
 use dioxus::prelude::*;
-use dioxus_elements::a;
-use gloo::{timers::future::TimeoutFuture, utils::window};
+use gloo::timers::future::TimeoutFuture;
 use tracing::Level;
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
@@ -41,10 +40,26 @@ fn App() -> Element {
 
 #[component]
 fn Home() -> Element {
-    let mut data = use_resource(move || async move { get_data("".to_string()).await });
+    let mut data = use_resource(move || async move { get_landing_page_data("".to_string()).await });
+    let mut refresh_counter = use_signal(|| 60);
+    let refresh_counter_toggle = use_signal(|| true);
+
+    /* Auto update data in background every 1000msecs */
+    use_future(move || async move {
+        loop {
+            TimeoutFuture::new(1000).await;
+            if refresh_counter_toggle() {
+                refresh_counter -= 1;
+                if refresh_counter() == 0 {
+                    data.restart();
+                    refresh_counter.set(60);
+                }
+            }
+        }
+    });
 
     match &*data.read_unchecked() {
-        Some(Ok(var)) => {
+        Some(Ok(stats)) => {
             rsx! {
                 div {class:"row justify-content-center mt-3",
                     div {class:"col-auto",
@@ -90,21 +105,20 @@ fn Home() -> Element {
                                 div {class:"card-body text-center",
                                     div {class:"row",
                                         div {class:"col",
-                                            p {"Network hashrate: {var.network.hashrate} Th/s"}
-                                            p {"Network difficulty: {var.network.difficulty} P"}
-                                            p {"Network height: {var.network.height}"}
+                                            p {"Network hashrate: {stats.network.hashrate} Th/s"}
+                                            p {"Network difficulty: {stats.network.difficulty} P"}
+                                            p {"Network height: {stats.network.height}"}
                                         }
                                         div {class:"col",
-                                            p {"Pool hashrate: {var.pool.hashrate} Gh/s"}
-                                            p {"Pool blocks mined: {var.pool.total_blocks}"}
-                                            p {"Pool miners: {var.pool.connected_miners}"}
+                                            p {"Pool hashrate: {stats.pool.hashrate} Gh/s"}
+                                            p {"Pool blocks mined: {stats.pool.total_blocks}"}
+                                            p {"Pool miners: {stats.pool.connected_miners}"}
                                         }
                                     }
                                 }
                             }
                         }
                     }
-
                 }
 
                 br{}
@@ -119,8 +133,7 @@ fn Home() -> Element {
             rsx! { h1 {"{err}"}}
         }
         None => {
-            rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}
-            }
+            rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
         }
     }
 }
@@ -189,7 +202,7 @@ fn Wallet(address: String) -> Element {
 
                 div {class:"row align-items-start",
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 12rem; min-height: 9rem;",
+                            div {class:"card text-bg-light m-1", style:"min-width: 18rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"HASHRATE"}}
                                     div {class:"row",
                                         div {class:"col",
@@ -202,20 +215,7 @@ fn Wallet(address: String) -> Element {
                                 }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 12rem; min-height: 9rem;",
-                                    div {class: "card-title m-2", b {"INFO"}}
-                                    div {class:"row",
-                                        div {class:"col",
-                                            div {class:"card-body", h5 {class:"card-text", "{stats.network.height}"}, p {class:"card-text", "Block Height"}}
-                                        }
-                                        div {class:"col",
-                                            div {class:"card-body", h5 {class:"card-text", "{stats.pool.connected_miners}"}, p {class:"card-text", "Pool Miners"}}
-                                        }
-                                    }
-                                }
-                        },
-                        div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 12rem; min-height: 9rem;",
+                            div {class:"card text-bg-light m-1", style:"min-width: 18rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"BLOCK"}}
                                     div {class:"row",
                                         div {class:"col",
@@ -228,7 +228,7 @@ fn Wallet(address: String) -> Element {
                             }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 12rem; min-height: 9rem;",
+                            div {class:"card text-bg-light m-1", style:"min-width: 18rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"CURRENT"}}
                                     div {class:"row",
                                         div {class:"col",
@@ -238,7 +238,20 @@ fn Wallet(address: String) -> Element {
                                             div {class:"card-body", h5 {class:"card-text", "{stats.miner.round_contribution}%"}, p {class:"card-text", "Participation"}}
                                         }
                                     }
+                            }
+                        },
+                        div {class: "col",
+                            div {class:"card text-bg-light m-1", style:"min-width: 18rem; min-height: 9rem;",
+                                div {class: "card-title m-2", b {"MINER INFO"}}
+                                div {class:"row",
+                                    div {class:"col",
+                                        div {class:"card-body", h5 {class:"card-text", "{stats.miner.paid_24h} Σ"}, p {class:"card-text", "24h Paid"}}
+                                    }
+                                    div {class:"col",
+                                        div {class:"card-body", h5 {class:"card-text", "{stats.miner.total_paid} Σ"}, p {class:"card-text", "Total Paid"}}
+                                    }
                                 }
+                            }
                         },
                     },
 
@@ -248,35 +261,40 @@ fn Wallet(address: String) -> Element {
                             div {class:"card-title m-2", b {"MINER STATS"}}
                             div {class:"row justify-content-center",
                                 div {class: "col",
-                                        div {class:"card-body",
+                                    div {class:"card-body",
                                         h4 {class:"card-text m-2", "{stats.miner.hashrate_current} Mh/s"}
-                                            p {class:"card-text m-2", "Current"}
-                                            }
+                                        p {class:"card-text m-2", "Current"}
                                     }
-                                div {class: "col",
-                                        div {class:"card-body",
-                                            h4 {class:"card-text m-2", "{stats.miner.hashrate_6h} Mh/s"}
-                                            p {class:"card-text m-2", "6h Average"}
-                                            }
-                                    }
-                                div {class: "col",
-                                        div {class:"card-body",
-                                            h4 {class:"card-text m-2", "{stats.miner.hashrate_24h} Mh/s"}
-                                            p {class:"card-text m-2", "24h Average"}
-                                            }
                                 }
                                 div {class: "col",
-                                div {class:"card-body",
-                                    h4 {class:"card-text m-2", "{stats.miner.paid_24h} Σ"}
-                                    p {class:"card-text m-2", "24h Paid"}
+                                    div {class:"card-body",
+                                        h4 {class:"card-text m-2", "{stats.miner.hashrate_6h} Mh/s"}
+                                        p {class:"card-text m-2", "6h Average"}
                                     }
-                        }
                                 }
+                                div {class: "col",
+                                    div {class:"card-body",
+                                        h4 {class:"card-text m-2", "{stats.miner.hashrate_12h} Mh/s"}
+                                        p {class:"card-text m-2", "12h Average"}
+                                    }
+                                }
+                                div {class: "col",
+                                    div {class:"card-body",
+                                        h4 {class:"card-text m-2", "{stats.miner.hashrate_24h} Mh/s"}
+                                        p {class:"card-text m-2", "24h Average"}
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
                 {Chart()}
                 {WorkerTable(stats.clone())}
+                br{}
+                br{}
+                br{}
+                br{}
             }
         },
         Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
