@@ -133,7 +133,83 @@ fn Home() -> Element {
             rsx! { h1 {"{err}"}}
         }
         None => {
-            rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
+            rsx! {
+                div {class:"row justify-content-center mt-3",
+                    div {class:"col-auto",
+                        img {max_width:"100px", max_height:"100px",src: "sig-logo.png"}
+                    }
+                }
+                div {class:"row justify-content-center",
+                    div {class:"col-auto",
+                        div {class:"page-heading",
+                            h1 { b {"Sigmanauts"}}
+                        }
+                    }
+                }
+                div {class:"row justify-content-center m-3",
+                    div {class:"col-auto",
+                        div {class:"page-heading text-center",
+                            h3 { "A community to empower users of the Ergo blockchain"}
+                        }
+                    }
+                }
+
+                div {class:"row text-center",
+                    div {class:"col-auto",
+                        div {class:"card-body align-items-center", h5 {class:"card-text", "Welcome to the Sigmanauts pool, a DAO-driven, community-run mining pool dedicated to supporting the Ergo ecosystem. Joining us not only contributes to the Ergo community (fees go to Sigmanauts treasury) but also offers hourly bonus token payments."}}
+                    }
+                }
+                div {class:"row justify-content-center",
+                    div {class:"col",
+                        div {class:"card text-bg-light mt-4", style:"min-height: 13rem; min-width: 20rem;",
+                            div {class: "card-title m-2", b {"HOW TO CONNECT"}}
+                            div {class:"card-body text-center",
+                                div {class:"card-text placeholder-wave",
+                                    span {class:"placeholder w-75"}
+                                    span {class:"placeholder w-75"}
+                                },
+                                br{}
+                                div {class:"card-text placeholder-wave",
+                                    span {class:"placeholder w-75"}
+                                    span {class:"placeholder w-75"}
+                                },
+                            }
+                        }
+                    }
+                    div {class:"col",
+                        div {class:" card text-bg-light mt-4", style:"min-height: 13rem;  min-width: 20rem;",
+                            div {class:" card-title m-2", b {"STATS"},
+                                div {class:"card-body text-center",
+                                    div {class:"row",
+                                        div {class:"col",
+                                            p {class:"card-text placeholder-wave",
+                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder w-100"}
+                                            }
+
+                                        }
+                                        div {class:"col",
+                                            p {class:"card-text placeholder-wave",
+                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder w-100"}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                br{}
+                br{}
+                br{}
+                br{}
+                br{}
+
+            }
         }
     }
 }
@@ -299,7 +375,133 @@ fn Wallet(address: String) -> Element {
         },
         Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
         None => {
-            rsx! { div {class:"d-flex justify-content-center", div {class:"spinner-border", role:"status", span{class:"visually-hidden", "Loading..."}}}}
+            rsx! {
+
+                div {class: "container text-begin",
+                    div {class:"row align-items-start",
+                        div {class:"col",
+                            div {class:"card text-bg-light m-1 mt-2", style:"min-width: 30rem; min-height: 3rem;",
+                                div {class:"card-title m-2",
+                                    div {class:"row",
+                                        div{class:"col", b {"{address.clone()}"}},
+                                        div{class:"col-auto",
+                                            div{class:"row",
+                                                div {class:"col",
+                                                    div {class:"row",
+                                                        div {class:"col-auto", label{class:"form-check-label", "for":"flexSwitchCheckChecked", "Update in: {refresh_counter}"}}
+                                                        div {class:"col-auto",
+                                                            div {class:"form-check form-switch",
+                                                                input {class:"form-check-input", "type":"checkbox", role:"switch", id:"flexSwitchCheckChecked",
+                                                                    onclick: move |_| {
+                                                                        if refresh_counter_toggle() {
+                                                                            refresh_counter_toggle.set(false);
+                                                                            refresh_counter.set(60);
+                                                                        } else
+                                                                        {
+                                                                            refresh_counter_toggle.set(true);
+                                                                            data.restart();
+                                                                        }
+                                                                    } , checked:"{false}"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    div {class:"row align-items-start",
+                            div {class: "col",
+                                div {class:"card text-bg-light m-1", style:"min-width: 18rem; min-height: 9rem;",
+                                        div {class: "card-title m-2", b {"HASHRATE"}}
+                                        div {class:"row placeholder-wave m-2",
+                                            div {class:"col ",
+                                                span {class:"placeholder w-100"},
+                                                span {class:"placeholder w-100"}
+                                            }
+                                            div {class:"col",
+                                                span {class:"placeholder w-100"},
+                                                span {class:"placeholder w-100"}
+                                            }
+                                        }
+                                    }
+                            },
+                            div {class: "col",
+                                div {class:"card text-bg-light m-1", style:"min-width: 18rem; min-height: 9rem;",
+                                        div {class: "card-title m-2", b {"BLOCK"}}
+                                        div {class:"row placeholder-wave m-2",
+                                            div {class:"col ",
+                                                span {class:"placeholder w-100"},
+                                                span {class:"placeholder w-100"}
+                                            }
+                                            div {class:"col",
+                                                span {class:"placeholder w-100"},
+                                                span {class:"placeholder w-100"}
+                                            }
+                                        }
+                                }
+                            },
+                            div {class: "col",
+                                div {class:"card text-bg-light m-1", style:"min-width: 18rem; min-height: 9rem;",
+                                        div {class: "card-title m-2", b {"CURRENT"}}
+                                        div {class:"row placeholder-wave m-2",
+                                            div {class:"col ",
+                                                span {class:"placeholder w-100"},
+                                                span {class:"placeholder w-100"}
+                                            }
+                                            div {class:"col",
+                                                span {class:"placeholder w-100"},
+                                                span {class:"placeholder w-100"}
+                                            }
+                                        }
+                                }
+                            },
+                            div {class: "col",
+                                div {class:"card text-bg-light m-1", style:"min-width: 18rem; min-height: 9rem;",
+                                    div {class: "card-title m-2", b {"MINER INFO"}}
+                                    div {class:"row placeholder-wave m-2",
+                                    div {class:"col ",
+                                        span {class:"placeholder w-100"},
+                                        span {class:"placeholder w-100"}
+                                    }
+                                    div {class:"col",
+                                        span {class:"placeholder w-100"},
+                                        span {class:"placeholder w-100"}
+                                    }
+                                }
+                                }
+                            },
+                        },
+
+
+                    div {class:"row align-items-start",
+                        div {class:"col",
+                            div {class:"card text-bg-light m-1", style:"min-width: 30rem; min-height: 8rem;",
+                                div {class:"card-title m-2", b {"MINER STATS"}}
+                                div {class:"row justify-content-center   placeholder-wave m-2",
+                                    div {class: "col",
+                                        div {class:"card-body",
+                                            span {class:"placeholder w-100"},
+                                            span {class:"placeholder w-100"}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    {Chart()}
+                    // {WorkerTable(stats.clone())}
+                    br{}
+                    br{}
+                    br{}
+                    br{}
+                }
+            }
         }
     }
 }
