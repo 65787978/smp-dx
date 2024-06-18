@@ -1,5 +1,5 @@
 use crate::chart::Chart;
-use crate::data::get_data;
+use crate::data::*;
 use crate::workertable::WorkerTable;
 use dioxus::prelude::*;
 use gloo::timers::future::TimeoutFuture;
@@ -210,12 +210,12 @@ pub fn Miner(address: String) -> Element {
                                         div {class: "card-title m-2", b {"HASHRATE"}}
                                         div {class:"row placeholder-wave m-2",
                                             div {class:"col ",
-                                                span {class:"placeholder w-100"},
-                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder col-10"},
+                                                span {class:"placeholder col-6"}
                                             }
                                             div {class:"col",
-                                                span {class:"placeholder w-100"},
-                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder col-10"},
+                                                span {class:"placeholder col-6"}
                                             }
                                         }
                                     }
@@ -225,12 +225,12 @@ pub fn Miner(address: String) -> Element {
                                         div {class: "card-title m-2", b {"BLOCK"}}
                                         div {class:"row placeholder-wave m-2",
                                             div {class:"col ",
-                                                span {class:"placeholder w-100"},
-                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder col-4"},
+                                                span {class:"placeholder col-10"}
                                             }
                                             div {class:"col",
-                                                span {class:"placeholder w-100"},
-                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder col-6"},
+                                                span {class:"placeholder col-10"}
                                             }
                                         }
                                 }
@@ -240,12 +240,12 @@ pub fn Miner(address: String) -> Element {
                                         div {class: "card-title m-2", b {"CURRENT"}}
                                         div {class:"row placeholder-wave m-2",
                                             div {class:"col ",
-                                                span {class:"placeholder w-100"},
-                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder col-8"},
+                                                span {class:"placeholder col-10"}
                                             }
                                             div {class:"col",
-                                                span {class:"placeholder w-100"},
-                                                span {class:"placeholder w-100"}
+                                                span {class:"placeholder col-8"},
+                                                span {class:"placeholder col-10"}
                                             }
                                         }
                                 }
@@ -255,12 +255,12 @@ pub fn Miner(address: String) -> Element {
                                     div {class: "card-title m-2", b {"MINER INFO"}}
                                     div {class:"row placeholder-wave m-2",style:" placeholder-opacity-min: 0.2; placeholder-opacity-max: 0.5;",
                                     div {class:"col ",
-                                        span {class:"placeholder w-100"},
-                                        span {class:"placeholder w-100"}
+                                        span {class:"placeholder col-4"},
+                                        span {class:"placeholder col-10"}
                                     }
                                     div {class:"col",
-                                        span {class:"placeholder w-100"},
-                                        span {class:"placeholder w-100"}
+                                        span {class:"placeholder col-12"},
+                                        span {class:"placeholder col-10"}
                                     }
                                 }
                                 }
@@ -272,11 +272,29 @@ pub fn Miner(address: String) -> Element {
                         div {class:"col",
                             div {class:"card text-bg-light m-1", style:"min-width: 30rem; min-height: 8rem;",
                                 div {class:"card-title m-2", b {"MINER STATS"}}
-                                div {class:"row justify-content-center   placeholder-wave m-2",
+                                div {class:"row justify-content-center placeholder-wave m-2",
                                     div {class: "col",
                                         div {class:"card-body",
-                                            span {class:"placeholder w-100"},
                                             span {class:"placeholder w-100"}
+                                            span {class:"placeholder col-4"}
+                                        }
+                                    }
+                                    div {class: "col",
+                                        div {class:"card-body",
+                                            span {class:"placeholder w-100"}
+                                            span {class:"placeholder col-4"}
+                                        }
+                                    }
+                                    div {class: "col",
+                                        div {class:"card-body",
+                                            span {class:"placeholder w-100"}
+                                            span {class:"placeholder col-4"}
+                                        }
+                                    }
+                                    div {class: "col",
+                                        div {class:"card-body",
+                                            span {class:"placeholder w-100"}
+                                            span {class:"placeholder col-4"}
                                         }
                                     }
                                 }
@@ -284,7 +302,7 @@ pub fn Miner(address: String) -> Element {
                         }
                     }
                     {Chart()}
-                    // {WorkerTable(stats.clone())}
+                    {WorkerTable(Stats::default())}
                     br{}
                     br{}
                     br{}

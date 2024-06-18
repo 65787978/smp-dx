@@ -7,14 +7,14 @@ const POOL_API_URL: &str = "http://15.204.211.130:4000/api/pools/ErgoSigmanauts"
 const NETWORK_API_URL: &str = "https://api.ergoplatform.com/info";
 const PRICE_API_URL: &str = "https://api.spectrum.fi/v1/price-tracking/cmc/markets";
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Worker {
     pub name: String,
     pub hashrate: f64,
     pub shares_per_second: f64,
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct NetworkStats {
     pub hashrate: f64,
     pub difficulty: f64,
@@ -24,7 +24,7 @@ pub struct NetworkStats {
     pub price: f64,
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct PoolStats {
     pub data: serde_json::Value,
     pub hashrate: f64,
@@ -34,7 +34,7 @@ pub struct PoolStats {
     pub confirming_new_block: f64,
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct MinerStats {
     pub data: serde_json::Value,
     pub address: String,
@@ -51,7 +51,7 @@ pub struct MinerStats {
     pub workers: Vec<Worker>,
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Stats {
     pub network: NetworkStats,
     pub pool: PoolStats,
