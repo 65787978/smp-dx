@@ -10,6 +10,8 @@ use homepage::Home;
 use miner::Miner;
 use tracing::Level;
 
+const _: &str = manganis::mg!(file("./assets/main.css"));
+
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
     #[route("/")]
