@@ -87,7 +87,7 @@ pub fn Miner(address: String) -> Element {
                                             div {class:"card-body", h5 {class:"card-text", "{stats.network.reward} Σ"}, p {class:"card-text", "Reward"}}
                                         }
                                         div {class:"col",
-                                            div {class:"card-body", h5 {class:"card-text", "${stats.network.price}"}, p {class:"card-text", "ERG / SigUSD"}}
+                                            div {class:"card-body", h5 {class:"card-text", "${stats.network.price}"}, p {class:"card-text", "SigUSD"}}
                                         }
                                     }
                             }
