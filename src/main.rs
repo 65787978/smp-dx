@@ -28,12 +28,12 @@ fn main() {
 
 fn App() -> Element {
     rsx! {
-        main{class:"flex-shrink-0",
+        main{class:"flex-shrink-1",
 
 
                     NavBar {},
 
-                    div {class: "container",
+                    div {class: "container-fluid col-10",
 
                             Router::<Route> {}
                         }

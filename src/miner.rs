@@ -27,7 +27,6 @@ pub fn Miner(address: String) -> Element {
     match &*data.read_unchecked() {
         Some(Ok(stats)) => rsx! {
 
-            div {class: "container text-begin",
                 div {class:"row align-items-start",
                     div {class:"col",
                         div {class:"card text-bg-light m-1 mt-2", style:"min-width: 30rem; min-height: 3rem;",
@@ -160,7 +159,6 @@ pub fn Miner(address: String) -> Element {
                 br{}
                 br{}
                 br{}
-            }
         },
         Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
         None => {
