@@ -225,12 +225,12 @@ pub fn Miner(address: String) -> Element {
                                         div {class: "card-title m-2", b {"BLOCK"}}
                                         div {class:"row placeholder-wave m-2",
                                             div {class:"col ",
-                                                span {class:"placeholder col-4"},
-                                                span {class:"placeholder col-10"}
+                                                span {class:"placeholder col-10"},
+                                                span {class:"placeholder col-6"}
                                             }
                                             div {class:"col",
-                                                span {class:"placeholder col-6"},
-                                                span {class:"placeholder col-10"}
+                                                span {class:"placeholder col-10"},
+                                                span {class:"placeholder col-6"}
                                             }
                                         }
                                 }
@@ -240,12 +240,12 @@ pub fn Miner(address: String) -> Element {
                                         div {class: "card-title m-2", b {"CURRENT"}}
                                         div {class:"row placeholder-wave m-2",
                                             div {class:"col ",
-                                                span {class:"placeholder col-8"},
-                                                span {class:"placeholder col-10"}
+                                                span {class:"placeholder col-10"},
+                                                span {class:"placeholder col-6"}
                                             }
                                             div {class:"col",
-                                                span {class:"placeholder col-8"},
-                                                span {class:"placeholder col-10"}
+                                                span {class:"placeholder col-10"},
+                                                span {class:"placeholder col-6"}
                                             }
                                         }
                                 }
@@ -255,12 +255,12 @@ pub fn Miner(address: String) -> Element {
                                     div {class: "card-title m-2", b {"MINER INFO"}}
                                     div {class:"row placeholder-wave m-2",style:" placeholder-opacity-min: 0.2; placeholder-opacity-max: 0.5;",
                                     div {class:"col ",
-                                        span {class:"placeholder col-4"},
-                                        span {class:"placeholder col-10"}
+                                        span {class:"placeholder col-10"},
+                                        span {class:"placeholder col-6"}
                                     }
                                     div {class:"col",
-                                        span {class:"placeholder col-12"},
-                                        span {class:"placeholder col-10"}
+                                        span {class:"placeholder col-10"},
+                                        span {class:"placeholder col-6"}
                                     }
                                 }
                                 }
