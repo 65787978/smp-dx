@@ -153,7 +153,7 @@ pub fn Miner(address: String) -> Element {
                         }
                     }
                 }
-                {Chart()}
+                {Chart(stats.miner.clone())}
                 {WorkerTable(stats.clone())}
                 br{}
                 br{}
@@ -298,7 +298,7 @@ pub fn Miner(address: String) -> Element {
                         }
                     }
                 }
-                {Chart()}
+                // {Chart()}
                 {WorkerTable(Stats::default())}
                 br{}
                 br{}

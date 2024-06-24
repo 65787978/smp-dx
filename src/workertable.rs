@@ -20,16 +20,17 @@ pub fn WorkerTable(stats: Stats) -> Element {
                        }
 
                        tbody {
-
-
                             for worker in stats.miner.workers.iter(){
-                            tr{
-                                th{ scope: "row", "{active_workers}"}
-                                td{"{worker.name}"}
-                                td{"{worker.hashrate} Mh/s"}
-                            }
-                            {active_workers += 1;
-                                total_hashrate += worker.hashrate}
+                                tr{
+                                    th{ scope: "row", "{active_workers}"}
+                                    td{"{worker.name}"}
+                                    td{"{worker.hashrate} Mh/s"}
+                                }
+
+                                {
+                                    active_workers += 1;
+                                    total_hashrate += worker.hashrate
+                                }
                             }
                         }
                         thead {
@@ -57,8 +58,6 @@ pub fn WorkerTable(stats: Stats) -> Element {
                        }
 
                        tbody {
-
-
                             tr{
                                 th{ scope: "row", span {class:"placeholder col-1 m-2"}}
                                 td{span {class:"placeholder col-3 m-2"}}
@@ -69,7 +68,7 @@ pub fn WorkerTable(stats: Stats) -> Element {
                         thead {
                             tr{
                                 th{ scope: "col", span {class:"placeholder col-3 m-2"}}
-                                th{ scope: "col", ""}
+                                th{ scope: "col", span {class:"placeholder col-3 m-2"}}
                                 th{ scope: "col", span {class:"placeholder col-3 m-2"}}
                             }
                        }

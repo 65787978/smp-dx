@@ -29,8 +29,6 @@ fn main() {
 fn App() -> Element {
     rsx! {
         main{class:"flex-shrink-1",
-
-
                     NavBar {},
 
                     div {class: "container-fluid col-10",
