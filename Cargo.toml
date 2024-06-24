@@ -1,7 +1,7 @@
 [package]
 name = "smp-dx"
-version = "0.1.0"
-authors = ["ergXned <126957013+ergXned@users.noreply.github.com>"]
+version = "0.0.1"
+authors = ["65787978"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
