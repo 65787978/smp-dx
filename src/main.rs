@@ -1,10 +1,12 @@
 #![allow(non_snake_case)]
+mod blocks;
 mod chart;
 mod data;
 mod homepage;
 mod miner;
 mod workertable;
 
+use blocks::Blocks;
 use dioxus::prelude::*;
 use homepage::Home;
 use miner::Miner;
@@ -18,6 +20,8 @@ enum Route {
     Home {},
     #[route("/wallet/:address")]
     Miner { address: String },
+    #[route("/blocks")]
+    Blocks {},
 }
 
 fn main() {
@@ -60,7 +64,7 @@ fn NavBar() -> Element {
                     a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
 
                     ul {class: "navbar-nav col-lg-6 justify-content-lg-center",
-                        li {class: "nav-item", a{ class: "nav-link", href: "/", "Blocks"}}
+                        li {class: "nav-item", a{ class: "nav-link", href: "/blocks", "Blocks"}}
                         li {class: "nav-item", a{ class: "nav-link", href: "https://discord.com/channels/668903786361651200/1153460448214122526", "Support"}}
                         li {class: "nav-item",
                             a { class: "btn btn-outline-secondary mb-1", href: "https://explorer.ergoplatform.com/payment-request?address=9fFzKA2WHNYyXZWc4MHPtSv6YqS8jtDsZkSnAQwVaAZrYn9ojEA", "Donate",

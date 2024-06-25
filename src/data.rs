@@ -58,6 +58,20 @@ pub struct Stats {
     pub miner: MinerStats,
 }
 
+#[derive(Debug, Default, Clone, PartialEq)]
+pub struct Blocks {
+    pub created: String,
+    pub block_height: u64,
+    pub effort: f64,
+    pub block_reward: f64,
+    pub confirmation_progress: f64,
+    pub miner: String,
+}
+#[derive(Debug, Default, Clone, PartialEq)]
+pub struct VecBlock {
+    pub blocks: Vec<Blocks>,
+}
+
 impl fmt::Display for Stats {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:#?}", self)
@@ -119,6 +133,14 @@ pub async fn get_landing_page_data(address: String) -> Result<Stats, reqwest::Er
     })
 }
 
+/// Get block data
+pub async fn get_block_data() -> Result<VecBlock, reqwest::Error> {
+    let mut block_data = VecBlock::default().await;
+
+    block_data.get_block_data().await.unwrap();
+
+    Ok(block_data)
+}
 impl NetworkStats {
     pub async fn default() -> Self {
         NetworkStats {
@@ -367,8 +389,6 @@ impl MinerStats {
             .as_f64()
             .expect("pendingShares not available");
 
-        // Round contribution TODO!
-
         self.total_paid = (self.data["totalPaid"]
             .as_f64()
             .expect("totalPaid not available")
@@ -433,4 +453,66 @@ impl MinerStats {
         }
         Ok(())
     }
+}
+
+impl VecBlock {
+    pub async fn default() -> VecBlock {
+        VecBlock {
+            blocks: vec![Blocks {
+                created: String::default(),
+                block_height: u64::default(),
+                effort: f64::default(),
+                block_reward: f64::default(),
+                confirmation_progress: f64::default(),
+                miner: String::default(),
+            }],
+        }
+    }
+
+    async fn get_block_data(&mut self) -> Result<(), reqwest::Error> {
+        let data: serde_json::Value = Client::new()
+            .get(format!("{}/blocks", POOL_API_URL))
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        if let serde_json::Value::Array(block_array) = data.clone() {
+            for block in block_array {
+                if block["reward"].as_f64().unwrap() != 0.0 {
+                    self.blocks.push(Blocks {
+                        created: block["created"].to_string(),
+                        block_height: block["blockHeight"].as_u64().unwrap(),
+                        effort: (block["effort"].as_f64().unwrap() * 10000.0).round() / 100.0,
+                        block_reward: (block["reward"].as_f64().unwrap() * 100.0).round() / 100.0,
+                        confirmation_progress: block["confirmationProgress"].as_f64().unwrap(),
+                        miner: shorten_string(block["miner"].as_str().unwrap(), 25),
+                    });
+                } else {
+                    self.blocks.push(Blocks {
+                        created: block["created"].to_string(),
+                        block_height: block["blockHeight"].as_u64().unwrap(),
+                        effort: 0.0,
+                        block_reward: 0.0,
+                        confirmation_progress: 0.0,
+                        miner: shorten_string(block["miner"].as_str().unwrap(), 25),
+                    });
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+fn shorten_string(s: &str, max_len: usize) -> String {
+    if s.len() <= max_len {
+        return String::from(s);
+    }
+
+    let start_len = (max_len - 3) / 2;
+    let end_len = max_len - 3 - start_len;
+
+    let shortened = format!("{}...{}", &s[..start_len], &s[s.len() - end_len..]);
+
+    shortened
 }
