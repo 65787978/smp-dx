@@ -5,19 +5,16 @@ use gloo::timers::future::TimeoutFuture;
 #[component]
 pub fn Blocks() -> Element {
     let mut refresh_counter = use_signal(|| 5 as u8);
-    let mut refresh_counter_toggle = use_signal(|| true);
     let mut data = use_resource(move || async move { get_block_data().await });
 
     /* Auto update data in background every 1000msecs */
     use_future(move || async move {
         loop {
             TimeoutFuture::new(1000).await;
-            if refresh_counter_toggle() {
-                refresh_counter -= 1;
-                if refresh_counter() == 0 {
-                    data.restart();
-                    refresh_counter.set(5);
-                }
+            refresh_counter -= 1;
+            if refresh_counter() == 0 {
+                data.restart();
+                refresh_counter.set(5);
             }
         }
     });
