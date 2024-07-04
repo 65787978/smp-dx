@@ -35,7 +35,7 @@ fn App() -> Element {
         main{class:"flex-shrink-1",
                     NavBar {},
 
-                    div {class: "container-fluid col-10",
+                    div {class: "container-xxl",
 
                             Router::<Route> {}
                         }
