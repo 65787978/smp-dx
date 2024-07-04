@@ -54,7 +54,7 @@ pub fn Home() -> Element {
                 }
                 div {class:"row justify-content-center",
                     div {class:"col",
-                        div {class:"card text-bg-light mt-4", style:"min-height: 10rem; min-width: 20rem;",
+                        div {class:"card text-bg mt-4", style:"min-height: 10rem; min-width: 20rem;",
                             div {class: "card-title m-2", b {"HOW TO CONNECT"}}
                             div {class:"card-body text-center",
                                 div {class:"card-text", "Under 10 Gh/s:"},
@@ -66,7 +66,7 @@ pub fn Home() -> Element {
                         }
                     }
                     div {class:"col",
-                        div {class:" card text-bg-light mt-4", style:"min-height: 10rem;  min-width: 20rem;",
+                        div {class:" card text-bg mt-4", style:"min-height: 10rem;  min-width: 20rem;",
                             div {class:" card-title m-2", b {"STATS"},
                                 div {class:"card-body text-center",
                                     div {class:"row",
@@ -127,7 +127,7 @@ pub fn Home() -> Element {
                 }
                 div {class:"row justify-content-center",
                     div {class:"col",
-                        div {class:"card text-bg-light mt-4", style:"min-height: 13rem; min-width: 20rem;",
+                        div {class:"card text-bg mt-4", style:"min-height: 13rem; min-width: 20rem;",
                             div {class: "card-title m-2", b {"HOW TO CONNECT"}}
                             div {class:"card-body text-center",
                                 div {class:"card-text placeholder-wave",
@@ -143,7 +143,7 @@ pub fn Home() -> Element {
                         }
                     }
                     div {class:"col",
-                        div {class:" card text-bg-light mt-4", style:"min-height: 13rem;  min-width: 20rem;",
+                        div {class:" card text-bg mt-4", style:"min-height: 13rem;  min-width: 20rem;",
                             div {class:" card-title m-2", b {"STATS"},
                                 div {class:"card-body text-center",
                                     div {class:"row",

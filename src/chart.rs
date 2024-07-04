@@ -16,7 +16,7 @@ pub fn Chart(miner_data: MinerStats) -> Element {
     rsx!(
         div {class:"row justify-content-center",
             div {class:"col",
-                div {class:"card text-bg-light m-1",
+                div {class:"card text-bg m-1",
                     div {class:"card-title m-2", b {"MINER HASHRATE"}}
                     div {style:"min-width: 20rem; min-height: 20rem; max-height: 25rem;",
                         LineChart {

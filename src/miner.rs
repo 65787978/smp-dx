@@ -24,14 +24,14 @@ pub fn Miner(address: String) -> Element {
         }
     });
 
-    let short_address = shorten_string(address().as_str(), 25);
+    let short_address = shorten_string(address().as_str(), 35);
 
     match &*data.read_unchecked() {
         Some(Ok(stats)) => rsx! {
 
                 div {class:"row align-items-start",
                     div {class:"col",
-                        div {class:"card text-bg-light m-1 mt-2", style:"min-width: 20rem; min-height: 3rem;",
+                        div {class:"card text-bg m-1 mt-2", style:"min-width: 20rem; min-height: 3rem;",
                             div {class:"card-title m-2",
                                 div {class:"row",
                                     div{class:"col", b {"{short_address}"}},
@@ -68,7 +68,7 @@ pub fn Miner(address: String) -> Element {
 
                 div {class:"row align-items-start",
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 9rem;",
+                            div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"HASHRATE"}}
                                     div {class:"row",
                                         div {class:"col",
@@ -81,7 +81,7 @@ pub fn Miner(address: String) -> Element {
                                 }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 9rem;",
+                            div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"BLOCK"}}
                                     div {class:"row",
                                         div {class:"col",
@@ -94,7 +94,7 @@ pub fn Miner(address: String) -> Element {
                             }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 9rem;",
+                            div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"CURRENT"}}
                                     div {class:"row",
                                         div {class:"col",
@@ -110,7 +110,7 @@ pub fn Miner(address: String) -> Element {
 
                 div {class:"row align-items-start",
                     div {class: "col",
-                        div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 8rem;",
+                        div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 8rem;",
                             div {class: "card-title m-2", b {"MINER INFO"}}
 
                                 div {class:"row",
@@ -134,7 +134,7 @@ pub fn Miner(address: String) -> Element {
 
                 div {class:"row align-items-start",
                     div {class:"col",
-                        div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 8rem;",
+                        div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 8rem;",
                             div {class:"card-title m-2", b {"HASHRATE STATS"}}
                             div {class:"row justify-content-center",
                                 div {class: "col m-1",
@@ -179,7 +179,7 @@ pub fn Miner(address: String) -> Element {
 
                 div {class:"row align-items-start",
                     div {class:"col",
-                        div {class:"card text-bg-light m-1 mt-2", style:"min-width: 20rem; min-height: 3rem;",
+                        div {class:"card text-bg m-1 mt-2", style:"min-width: 20rem; min-height: 3rem;",
                             div {class:"card-title m-2",
                                 div {class:"row",
                                     div{class:"col", b {"{short_address}"}},
@@ -216,7 +216,7 @@ pub fn Miner(address: String) -> Element {
 
                 div {class:"row align-items-start",
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 9rem;",
+                            div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"HASHRATE"}}
                                     div {class:"row placeholder-wave m-2",
                                         div {class:"col ",
@@ -231,7 +231,7 @@ pub fn Miner(address: String) -> Element {
                                 }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 9rem;",
+                            div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"BLOCK"}}
                                     div {class:"row placeholder-wave m-2",
                                         div {class:"col ",
@@ -246,7 +246,7 @@ pub fn Miner(address: String) -> Element {
                             }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 9rem;",
+                            div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 9rem;",
                                     div {class: "card-title m-2", b {"CURRENT"}}
                                     div {class:"row placeholder-wave m-2",
                                         div {class:"col ",
@@ -261,18 +261,34 @@ pub fn Miner(address: String) -> Element {
                             }
                         },
                         div {class: "col",
-                            div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 9rem;",
+                            div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 9rem;",
                                 div {class: "card-title m-2", b {"MINER INFO"}}
-                                div {class:"row placeholder-wave m-2",style:" placeholder-opacity-min: 0.2; placeholder-opacity-max: 0.5;",
-                                div {class:"col ",
-                                    span {class:"placeholder col-10"},
-                                    span {class:"placeholder col-6"}
+                                div {class:"row justify-content-center placeholder-wave m-2",
+                                    div {class: "col",
+                                        div {class:"card-body",
+                                            span {class:"placeholder w-100"}
+                                            span {class:"placeholder col-4"}
+                                        }
+                                    }
+                                    div {class: "col",
+                                        div {class:"card-body",
+                                            span {class:"placeholder w-100"}
+                                            span {class:"placeholder col-4"}
+                                        }
+                                    }
+                                    div {class: "col",
+                                        div {class:"card-body",
+                                            span {class:"placeholder w-100"}
+                                            span {class:"placeholder col-4"}
+                                        }
+                                    }
+                                    div {class: "col",
+                                        div {class:"card-body",
+                                            span {class:"placeholder w-100"}
+                                            span {class:"placeholder col-4"}
+                                        }
+                                    }
                                 }
-                                div {class:"col",
-                                    span {class:"placeholder col-10"},
-                                    span {class:"placeholder col-6"}
-                                }
-                            }
                             }
                         },
                     },
@@ -280,7 +296,7 @@ pub fn Miner(address: String) -> Element {
 
                 div {class:"row align-items-start",
                     div {class:"col",
-                        div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 8rem;",
+                        div {class:"card text-bg m-1", style:"min-width: 20rem; min-height: 8rem;",
                             div {class:"card-title m-2", b {"MINER STATS"}}
                             div {class:"row justify-content-center placeholder-wave m-2",
                                 div {class: "col",

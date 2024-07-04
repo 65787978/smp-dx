@@ -90,14 +90,11 @@ fn NavBar() -> Element {
 fn Footer() -> Element {
     rsx! {
 
-    footer {class: "footer mt-auto py-1 bg-body-tertiary fixed-bottom",
+    footer {class: "footer mt-auto py-1 bg-body-tertiary",
         div {class:"container text-center",
                 div{class:"row",
                     div {class:"col",
-                        span {class:"text-body-secondary", "© 2021-2024 Sigmanauts Mining Pool"}
-                    }
-                    div {class:"col",
-                        span {class:"text-body-secondary", "Build with ❤️ from the Ergo Community"}
+                        span {class:"text-body-secondary", "© 2021-2024"}
                     }
                     div {class:"col",
 
