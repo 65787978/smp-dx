@@ -504,7 +504,7 @@ impl VecBlock {
     }
 }
 
-fn shorten_string(s: &str, max_len: usize) -> String {
+pub fn shorten_string(s: &str, max_len: usize) -> String {
     if s.len() <= max_len {
         return String::from(s);
     }

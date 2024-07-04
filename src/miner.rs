@@ -10,7 +10,7 @@ pub fn Miner(address: String) -> Element {
     let mut refresh_counter_toggle = use_signal(|| true);
     let mut data = use_resource(move || async move { get_data(address()).await });
 
-    /* Auto update data in background every 1000msecs */
+    /* Auto update data in background */
     use_future(move || async move {
         loop {
             TimeoutFuture::new(1000).await;
@@ -24,15 +24,17 @@ pub fn Miner(address: String) -> Element {
         }
     });
 
+    let short_address = shorten_string(address().as_str(), 25);
+
     match &*data.read_unchecked() {
         Some(Ok(stats)) => rsx! {
 
                 div {class:"row align-items-start",
                     div {class:"col",
-                        div {class:"card text-bg-light m-1 mt-2", style:"min-width: 30rem; min-height: 3rem;",
+                        div {class:"card text-bg-light m-1 mt-2", style:"min-width: 18rem; min-height: 3rem;",
                             div {class:"card-title m-2",
                                 div {class:"row",
-                                    div{class:"col", b {"{address.clone()}"}},
+                                    div{class:"col", b {"{short_address}"}},
                                     div{class:"col-auto",
                                         div{class:"row",
                                             div {class:"col",
