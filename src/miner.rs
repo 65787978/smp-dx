@@ -113,16 +113,16 @@ pub fn Miner(address: String) -> Element {
                             div {class: "card-title m-2", b {"MINER INFO"}}
                             div {class:"row",
                                 div {class:"col",
-                                    div {class:"card-body", h5 {class:"card-text", "{stats.miner.pending_balance} Σ"}, p {class:"card-text", "Pending Balance"}}
+                                    div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.pending_balance} Σ"}, p {class:"card-text m-2", "Pending Balance"}}
                                 }
                                 div {class:"col",
-                                    div {class:"card-body", h5 {class:"card-text", "{stats.miner.paid_24h} Σ"}, p {class:"card-text", "24h Paid"}}
+                                    div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.paid_24h} Σ"}, p {class:"card-text m-2", "24h Paid"}}
                                 }
                                 div {class:"col",
-                                    div {class:"card-body", h5 {class:"card-text", "{stats.miner.total_paid} Σ"}, p {class:"card-text", "Total Paid"}}
+                                    div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.total_paid} Σ"}, p {class:"card-text m-2", "Total Paid"}}
                                 }
                                 div {class:"col",
-                                    div {class:"card-body", h5 {class:"card-text", "{stats.miner.workers_number}"}, p {class:"card-text", "Rigs Online"}}
+                                    div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.workers_number}"}, p {class:"card-text m-2", "Rigs Online"}}
                                 }
                             }
                         }
