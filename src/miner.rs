@@ -107,24 +107,27 @@ pub fn Miner(address: String) -> Element {
                             }
                         }
                     }
+
                 div {class:"row align-items-start",
                     div {class: "col",
                         div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 8rem;",
                             div {class: "card-title m-2", b {"MINER INFO"}}
-                            div {class:"row",
-                                div {class:"col",
-                                    div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.pending_balance} Σ"}, p {class:"card-text m-2", "Pending Balance"}}
+
+                                div {class:"row",
+                                    div {class:"col m-1",
+                                        div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.pending_balance} Σ"}, p {class:"card-text m-2", "Pending Balance"}}
+                                    }
+                                    div {class:"col m-1",
+                                        div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.paid_24h} Σ"}, p {class:"card-text m-2", "24h Paid"}}
+                                    }
+                                    div {class:"col m-1",
+                                        div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.total_paid} Σ"}, p {class:"card-text m-2", "Total Paid"}}
+                                    }
+                                    div {class:"col m-1",
+                                        div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.workers_number}"}, p {class:"card-text m-2", "Rigs Online"}}
+                                    }
                                 }
-                                div {class:"col",
-                                    div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.paid_24h} Σ"}, p {class:"card-text m-2", "24h Paid"}}
-                                }
-                                div {class:"col",
-                                    div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.total_paid} Σ"}, p {class:"card-text m-2", "Total Paid"}}
-                                }
-                                div {class:"col",
-                                    div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.workers_number}"}, p {class:"card-text m-2", "Rigs Online"}}
-                                }
-                            }
+
                         }
                     },
                 },
@@ -134,25 +137,25 @@ pub fn Miner(address: String) -> Element {
                         div {class:"card text-bg-light m-1", style:"min-width: 20rem; min-height: 8rem;",
                             div {class:"card-title m-2", b {"HASHRATE STATS"}}
                             div {class:"row justify-content-center",
-                                div {class: "col",
+                                div {class: "col m-1",
                                     div {class:"card-body",
                                         h5 {class:"card-text m-2", "{stats.miner.hashrate_current} Mh/s"}
                                         p {class:"card-text m-2", "Current"}
                                     }
                                 }
-                                div {class: "col",
+                                div {class: "col m-1",
                                     div {class:"card-body",
                                         h5 {class:"card-text m-2", "{stats.miner.hashrate_6h} Mh/s"}
                                         p {class:"card-text m-2", "6h Average"}
                                     }
                                 }
-                                div {class: "col",
+                                div {class: "col m-1",
                                     div {class:"card-body",
                                         h5 {class:"card-text m-2", "{stats.miner.hashrate_12h} Mh/s"}
                                         p {class:"card-text m-2", "12h Average"}
                                     }
                                 }
-                                div {class: "col",
+                                div {class: "col m-1",
                                     div {class:"card-body",
                                         h5 {class:"card-text m-2", "{stats.miner.hashrate_24h} Mh/s"}
                                         p {class:"card-text m-2", "24h Average"}

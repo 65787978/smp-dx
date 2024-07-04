@@ -440,7 +440,7 @@ impl MinerStats {
             workers_number += 1;
         }
         self.workers_number = workers_number;
-        self.hashrate_current = (hashrate * 10.0).round() / 10.0;
+        self.hashrate_current = (hashrate * 100.0).round() / 100.0;
 
         //Hashrate 6h/24h
         let mut hashrate = 0.0;
@@ -449,9 +449,9 @@ impl MinerStats {
             hashrate += worker.1;
 
             match itter {
-                5 => self.hashrate_6h = ((hashrate / 6.0) * 10.0).round() / 10.0,
-                11 => self.hashrate_12h = ((hashrate / 12.0) * 10.0).round() / 10.0,
-                23 => self.hashrate_24h = ((hashrate / 24.0) * 10.0).round() / 10.0,
+                5 => self.hashrate_6h = ((hashrate / 6.0) * 100.0).round() / 100.0,
+                11 => self.hashrate_12h = ((hashrate / 12.0) * 100.0).round() / 100.0,
+                23 => self.hashrate_24h = ((hashrate / 24.0) * 100.0).round() / 100.0,
                 _ => {}
             }
             itter += 1;
