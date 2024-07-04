@@ -48,6 +48,7 @@ pub struct MinerStats {
     pub round_contribution: f64,
     pub total_paid: f64,
     pub paid_24h: f64,
+    pub workers_number: u64,
     pub workers: Vec<Worker>,
 }
 
@@ -324,6 +325,7 @@ impl MinerStats {
             round_contribution: f64::default(),
             total_paid: f64::default(),
             paid_24h: f64::default(),
+            workers_number: u64::default(),
             workers: Vec::default(),
         }
     }
@@ -432,9 +434,12 @@ impl MinerStats {
     async fn calculate_hashrate(&mut self) -> Result<(), reqwest::Error> {
         //Hashrate current
         let mut hashrate = 0.0;
+        let mut workers_number = 0;
         for worker in self.workers.iter() {
             hashrate += worker.hashrate;
+            workers_number += 1;
         }
+        self.workers_number = workers_number;
         self.hashrate_current = (hashrate * 100.0).round() / 100.0;
 
         //Hashrate 6h/24h
