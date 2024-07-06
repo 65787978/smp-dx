@@ -91,7 +91,7 @@ fn NavBar() -> Element {
 fn Footer() -> Element {
     rsx! {
 
-    footer {class: "footer mt-auto py-1 bg-body-tertiary",
+    footer {class: "footer mt-auto py-1 bg-body-tertiary fixed-bottom",
         div {class:"container text-center",
                 div{class:"row",
                     div {class:"col",

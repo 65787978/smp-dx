@@ -2,7 +2,6 @@
     background-color: #ffff;
  } */
 
-
 main {
     margin: 0;
     display: inline; 
@@ -16,3 +15,11 @@ main {
 .placeholder {
     opacity: 0.1; /* Change the value to adjust the opacity level */
  }
+
+ th {
+    text-align: center;
+  }
+
+ td {
+    text-align: center;
+  }

@@ -168,7 +168,7 @@ pub fn Miner(address: String) -> Element {
                     }
                 }
                 //Chart
-                { Chart(stats.miner.clone(), refresh_counter()) }
+                // { Chart(stats.miner.clone()) }
                 {WorkerTable(stats.clone())}
                 br{}
         },

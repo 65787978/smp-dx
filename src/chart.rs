@@ -1,7 +1,7 @@
 use crate::data::MinerStats;
 use dioxus::prelude::*;
 
-pub fn Chart(miner_data: MinerStats, refresh_counter: u8) -> Element {
+pub fn Chart(miner_data: MinerStats) -> Element {
     let mut x_axis = use_signal(|| vec![]);
     let mut y_axis = use_signal(|| vec![]);
 
@@ -70,18 +70,18 @@ pub fn Chart(miner_data: MinerStats, refresh_counter: u8) -> Element {
 
     rsx!(
         div {class:"row align-items-start",
-        div {class:"col",
-            div {class:"card text-bg m-1",
-                div {class:"card-title m-2", b {"MINER HASHRATE"}}
-                div {class:"card-body", style:"min-width: 20rem; min-height: 20rem; max-height: 25rem;",
-                canvas {id: "myChart"}
-                match future.value().as_ref() {
-                    Some(chart) => rsx!("{chart}"),
-                    _ => rsx!(p {}),
-                }
+            div {class:"col",
+                div {class:"card text-bg m-1",
+                    div {class:"card-title m-2", b {"MINER HASHRATE"}}
+                    div {class:"card-body", style:"min-width: 20rem; min-height: 20rem; max-height: 25rem;",
+                    canvas {id: "myChart"}
+                    match future.value().as_ref() {
+                        Some(chart) => rsx!("{chart}"),
+                        _ => rsx!(p {}),
+                    }
+                    }
                 }
             }
         }
-    }
     )
 }

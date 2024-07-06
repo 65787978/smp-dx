@@ -142,6 +142,7 @@ pub async fn get_block_data() -> Result<VecBlock, reqwest::Error> {
 
     Ok(block_data)
 }
+
 impl NetworkStats {
     pub async fn default() -> Self {
         NetworkStats {
@@ -486,12 +487,23 @@ impl VecBlock {
             for block in block_array {
                 if block["reward"].as_f64().unwrap() != 0.0 {
                     self.blocks.push(Blocks {
-                        created: block["created"].to_string(),
+                        created: {
+                            let date_time: DateTime<Utc> =
+                                DateTime::parse_from_rfc3339(block["created"].as_str().unwrap())
+                                    .unwrap()
+                                    .into();
+
+                            format!("{}", date_time.format("%H:%M  %d/%m/%Y"))
+                        },
+
                         block_height: block["blockHeight"].as_u64().unwrap(),
                         effort: (block["effort"].as_f64().unwrap() * 10000.0).round() / 100.0,
                         block_reward: (block["reward"].as_f64().unwrap() * 100.0).round() / 100.0,
-                        confirmation_progress: block["confirmationProgress"].as_f64().unwrap(),
-                        miner: shorten_string(block["miner"].as_str().unwrap(), 25),
+                        confirmation_progress: (block["confirmationProgress"].as_f64().unwrap()
+                            * 10000.0)
+                            .round()
+                            / 100.0,
+                        miner: shorten_string(block["miner"].as_str().unwrap(), 15),
                     });
                 } else {
                     self.blocks.push(Blocks {
@@ -500,7 +512,7 @@ impl VecBlock {
                         effort: 0.0,
                         block_reward: 0.0,
                         confirmation_progress: 0.0,
-                        miner: shorten_string(block["miner"].as_str().unwrap(), 25),
+                        miner: shorten_string(block["miner"].as_str().unwrap(), 15),
                     });
                 }
             }

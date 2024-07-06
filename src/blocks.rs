@@ -4,7 +4,7 @@ use gloo::timers::future::TimeoutFuture;
 
 #[component]
 pub fn Blocks() -> Element {
-    let mut refresh_counter = use_signal(|| 5 as u8);
+    let mut refresh_counter = use_signal(|| 60 as u8);
     let mut data = use_resource(move || async move { get_block_data().await });
 
     /* Auto update data in background every 1000msecs */
@@ -14,58 +14,76 @@ pub fn Blocks() -> Element {
             refresh_counter -= 1;
             if refresh_counter() == 0 {
                 data.restart();
-                refresh_counter.set(5);
+                refresh_counter.set(60);
             }
         }
     });
 
-    match &*data.read_unchecked() {
-        Some(Ok(block_stats)) => rsx!(
-            div { class:"mt-3 ms-1 justify-content-center",
-                h3 {" Pool Blocks"}
-                table {class: "table table-hover ",
+    rsx!(
+        div {class:"row align-items-center mt-3",
+            div {class:"col",
+                div {class:"card text-bg m-1",
+                    div {class:"card-title m-2", h3 {"Pool Blocks"}}
+                    div {class:"card-body", style:"min-width: 20rem; min-height: 20rem;",
+                    match &*data.read_unchecked() {
+                        Some(Ok(block_stats)) => rsx!(
 
-                        thead {
-                            tr{
-                                th{ scope: "col", "Created"}
-                                th{ scope: "col", "Height"}
-                                th{ scope: "col", "Effort"}
-                                th{ scope: "col", "Reward"}
-                                th{ scope: "col", "Status"}
-                                th{ scope: "col", "Miner"}
-                            }
-                        }
-                    tbody {
-                            for block in block_stats.blocks.iter(){
-                                tr{
-                                    if block.created != "" {
-                                        td{"{block.created}"}
-                                        td{"{block.block_height}"}
-                                        td{"{block.effort}%"}
-                                        td{"{block.block_reward} Σ"}
+                            div {style:"overflow-x:auto;",
+                                table {class: "table table-hover",
+                                        thead {
+                                            tr{
+                                                th{ scope: "col", "Created"}
+                                                th{ scope: "col", "Height"}
+                                                th{ scope: "col", "Effort"}
+                                                th{ scope: "col", "Reward"}
+                                                th{ scope: "col", "Status"}
+                                                th{ scope: "col", "Miner"}
+                                            }
+                                        }
+                                    tbody {
+                                            for block in block_stats.blocks.iter(){
+                                                tr{
+                                                    if block.created != "" {
+                                                        td{"{block.created}"}
+                                                        td{"{block.block_height}"}
+                                                        td{"{block.effort}%"}
+                                                        td{"{block.block_reward} Σ"}
 
-                                        if block.confirmation_progress == 0.0 && block.block_reward == 0.0
-                                        {
-                                            td{"Orphan"}
-                                        }
-                                        else if block.confirmation_progress == 1.0
-                                        {
-                                            td{"Confirmed"}
-                                        }
-                                        else {
-                                            td{"{block.confirmation_progress}"}
-                                        }
+                                                        if block.confirmation_progress == 0.00 && block.block_reward == 0.0
+                                                        {
+                                                            td{"Orphan"}
+                                                        }
+                                                        else if block.confirmation_progress == 100.0
+                                                        {
+                                                            td{
+                                                                div {class:"progress", "role":"progressbar",
+                                                                    div {class:"progress-bar", style:"width: 100%", "Confirmed"}
+                                                                }
+                                                            }
+                                                        }
+                                                        else {
+                                                            td {
+                                                                div {class:"progress", "role":"progressbar",
+                                                                    div {class:"progress-bar progress-bar-striped progress-bar-animated", style:"width: {block.confirmation_progress}%", "{block.confirmation_progress}%"}
+                                                                }
+                                                            }
+                                                        }
 
-                                        td{"{block.miner}"}
+                                                        td{"{block.miner}"}
+                                                    }
+
+                                                }
+                                            }
+                                        }
                                     }
-
                                 }
-                            }
-                        }
+                        ),
+                        Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
+                        None => rsx!("Loading..."),
                     }
+                    }
+                }
             }
-        ),
-        Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
-        None => rsx!("Loading..."),
-    }
+        }
+    )
 }
