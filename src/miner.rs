@@ -124,7 +124,7 @@ pub fn Miner(address: String) -> Element {
                                         div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.total_paid} Σ"}, p {class:"card-text m-2", "Total Paid"}}
                                     }
                                     div {class:"col m-1",
-                                        div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.workers_number}"}, p {class:"card-text m-2", "Rigs Online"}}
+                                        div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.workers_number}"}, p {class:"card-text m-2", "Active Workers"}}
                                     }
                                 }
 
