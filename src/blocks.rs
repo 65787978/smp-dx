@@ -49,22 +49,26 @@ pub fn Blocks() -> Element {
                                                         td{"{block.effort}%"}
                                                         td{"{block.block_reward} Σ"}
 
-                                                        if block.confirmation_progress == 0.00 && block.block_reward == 0.0
+                                                        if block.confirmation_progress == 0.0 && block.block_reward == 0.0
                                                         {
-                                                            td{"Orphan"}
+                                                            td{
+                                                                div {class:"progress", "role":"progressbar", style:"height: 2rem;",
+                                                                    div {class:"progress-bar bg-danger", style:"width: 100%", b{"Confirmed"}}
+                                                                }
+                                                            }
                                                         }
                                                         else if block.confirmation_progress == 100.0
                                                         {
                                                             td{
-                                                                div {class:"progress", "role":"progressbar",
-                                                                    div {class:"progress-bar", style:"width: 100%", "Confirmed"}
+                                                                div {class:"progress", "role":"progressbar", style:"height: 2rem;",
+                                                                    div {class:"progress-bar bg-success", style:"width: 100%", b{"Confirmed"}}
                                                                 }
                                                             }
                                                         }
                                                         else {
                                                             td {
-                                                                div {class:"progress", "role":"progressbar",
-                                                                    div {class:"progress-bar progress-bar-striped progress-bar-animated", style:"width: {block.confirmation_progress}%", "{block.confirmation_progress}%"}
+                                                                div {class:"progress", "role":"progressbar", style:"height: 2rem;",
+                                                                    div {class:"progress-bar progress-bar-striped progress-bar-animated bg-success", style:"width: {block.confirmation_progress}%", b{"{block.confirmation_progress}%"}}
                                                                 }
                                                             }
                                                         }
