@@ -1,6 +1,7 @@
-body {
-    /* background-color: #ffff; */
-}
+/* body {
+    background-color: #ffff;
+ } */
+
 
 main {
     margin: 0;
@@ -8,7 +9,8 @@ main {
     /* flex-direction: column; */
     justify-content: center;
     align-items: center; 
-    font-family: 'Roboto', sans-serif;
+    /* font-family: 'Roboto', sans-serif;*/
+    font-family: 'Inter', sans-serif;
 }
 
 .placeholder {

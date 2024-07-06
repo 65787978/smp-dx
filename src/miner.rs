@@ -168,16 +168,7 @@ pub fn Miner(address: String) -> Element {
                     }
                 }
                 //Chart
-                div {class:"row align-items-start",
-                    div {class:"col",
-                        div {class:"card text-bg m-1",
-                            div {class:"card-title m-2", b {"MINER HASHRATE"}}
-                            div {class:"card-body", style:"min-width: 20rem; min-height: 20rem; max-height: 25rem;",
-                                {Chart(stats.miner.clone())}
-                            }
-                        }
-                    }
-                }
+                { Chart(stats.miner.clone(), refresh_counter()) }
                 {WorkerTable(stats.clone())}
                 br{}
         },

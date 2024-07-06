@@ -51,19 +51,20 @@ fn App() -> Element {
 fn NavBar() -> Element {
     let mut address = use_signal(|| "".to_string());
     rsx! {
-    nav { class: "navbar navbar-expand-lg bg-body-tertiary rounded",
+        nav { class: "navbar navbar-expand-lg bg-body-tertiary rounded",
+            div { class: "container-fluid",
 
-        div { class: "container-fluid",
+                a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
 
-        a {class: "navbar-brand col-lg-3 me-0", href: "/", "Sigmanauts Mining Pool"}
+                button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation",
+                        span{class:"navbar-toggler-icon"}
+                }
 
-        button {"class": "navbar-toggler","type":"button", "data-bs-toggle": "collapse", "data-bs-target":"#navbar", "aria-controls": "navbar", "aria-expanded":"false","aria-label":"Toggle navigation",
-                span{class:"navbar-toggler-icon"}
-            }
+                div {class: "collapse navbar-collapse d-lg-flex", id:"navbar",
 
-            div {class: "collapse navbar-collapse d-lg-flex", id:"navbar",
+                    a {class:"nav-item col-lg-3 me-0"}
 
-                    ul {class: "navbar-nav col-lg-6 justify-content-lg-center",
+                    ul {class: "navbar-nav col-lg-6 align-items-center",
                         li {class: "nav-item", a{ class: "nav-link", href: "/blocks", "Blocks"}}
                         li {class: "nav-item", a{ class: "nav-link", href: "https://discord.com/channels/668903786361651200/1153460448214122526", "Support"}}
                         li {class: "nav-item",

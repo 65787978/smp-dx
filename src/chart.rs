@@ -1,7 +1,7 @@
 use crate::data::MinerStats;
 use dioxus::prelude::*;
 
-pub fn Chart(miner_data: MinerStats) -> Element {
+pub fn Chart(miner_data: MinerStats, refresh_counter: u8) -> Element {
     let mut x_axis = use_signal(|| vec![]);
     let mut y_axis = use_signal(|| vec![]);
 
@@ -15,17 +15,19 @@ pub fn Chart(miner_data: MinerStats) -> Element {
 
     // Create a future that will resolve once the javascript has been successfully executed.
     let future = use_resource(move || async move {
-        // The `eval` is available in the prelude - and simply takes a block of JS.
-        // Dioxus' eval is interesting since it allows sending messages to and from the JS code using the `await dioxus.recv()`
-        // builtin function. This allows you to create a two-way communication channel between Rust and JS.
         let mut chart = eval(
             r#"
 
                     let x_axis_data = await dioxus.recv();
                     let y_axis_data = await dioxus.recv();
 
+                    // var chart = Chart.getChart('myChart');
+                    // if (chart) {
+                    //     chart.clear();
+                    //     chart.destroy();
+                    // }
 
-                    var ctx = document.getElementById('myChart');
+                    var ctx = document.getElementById('myChart').getContext('2d');
 
                     new Chart(ctx, {
                         type: 'line',
@@ -51,10 +53,12 @@ pub fn Chart(miner_data: MinerStats) -> Element {
                             }
                         }
                     });
+
                 "#,
         );
 
         // Send a message to the JS code.
+
         chart.send(x_axis().into()).unwrap();
         chart.send(y_axis().into()).unwrap();
 
@@ -65,11 +69,19 @@ pub fn Chart(miner_data: MinerStats) -> Element {
     });
 
     rsx!(
-        canvas {id: "myChart"}
-        {
-        match future.value().as_ref() {
-            Some(chart) => rsx!("{chart}"),
-            _ => rsx!(p {}),
+        div {class:"row align-items-start",
+        div {class:"col",
+            div {class:"card text-bg m-1",
+                div {class:"card-title m-2", b {"MINER HASHRATE"}}
+                div {class:"card-body", style:"min-width: 20rem; min-height: 20rem; max-height: 25rem;",
+                canvas {id: "myChart"}
+                match future.value().as_ref() {
+                    Some(chart) => rsx!("{chart}"),
+                    _ => rsx!(p {}),
+                }
+                }
+            }
         }
-    })
+    }
+    )
 }
