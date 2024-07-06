@@ -2,9 +2,6 @@ use crate::data::MinerStats;
 use dioxus::prelude::*;
 
 pub fn Chart(miner_data: MinerStats) -> Element {
-    // let mut x_axis = vec![];
-    // let mut y_axis = vec![];
-
     let mut x_axis = use_signal(|| vec![]);
     let mut y_axis = use_signal(|| vec![]);
 
@@ -45,10 +42,11 @@ pub fn Chart(miner_data: MinerStats) -> Element {
                             }]
                         },
                         options: {
+                            maintainAspectRatio: false,
                             scales: {
                                 y: {
                                     beginAtZero: true,
-                                    max: Math.round(y_axis_data[0] * 1.5)
+                                    max: Math.round(y_axis_data[0] / 1000) * 1500
                                 }
                             }
                         }
@@ -67,22 +65,11 @@ pub fn Chart(miner_data: MinerStats) -> Element {
     });
 
     rsx!(
-                div {class:"row justify-content-center",
-                    div {class:"col m-3",
-                        div {class:"card text-bg m-1",
-                            div {class:"card-title m-2", b {"MINER HASHRATE"}}
-                            div {style:"min-width: 20rem; min-height: 20rem;",
-                                canvas {id: "myChart"}
-
-                                {    match future.value().as_ref() {
-                                        Some(chart) => rsx!("{chart}"
-                                                        ),
-                                        _ => rsx!( p {  } ),
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-    )
+        canvas {id: "myChart"}
+        {
+        match future.value().as_ref() {
+            Some(chart) => rsx!("{chart}"),
+            _ => rsx!(p {}),
+        }
+    })
 }

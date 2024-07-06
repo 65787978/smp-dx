@@ -72,7 +72,8 @@ pub fn Miner(address: String) -> Element {
                                     div {class: "card-title m-2", b {"HASHRATE"}}
                                     div {class:"row",
                                         div {class:"col",
-                                            div {class:"card-body", h5 {class:"card-text", "{stats.network.hashrate} Th/s"}, p {class:"card-text", "Network"}}
+                                            div {class:"card-body",
+                                            h5 {class:"card-text", "{stats.network.hashrate}"}, p {class:"card-text", "Network"}}
                                         }
                                         div {class:"col",
                                             div {class:"card-body", h5 {class:"card-text", "{stats.pool.hashrate} Gh/s"}, p {class:"card-text", "Pool"}}
@@ -166,11 +167,18 @@ pub fn Miner(address: String) -> Element {
                         }
                     }
                 }
-                {Chart(stats.miner.clone())}
+                //Chart
+                div {class:"row align-items-start",
+                    div {class:"col",
+                        div {class:"card text-bg m-1",
+                            div {class:"card-title m-2", b {"MINER HASHRATE"}}
+                            div {class:"card-body", style:"min-width: 20rem; min-height: 20rem; max-height: 25rem;",
+                                {Chart(stats.miner.clone())}
+                            }
+                        }
+                    }
+                }
                 {WorkerTable(stats.clone())}
-                br{}
-                br{}
-                br{}
                 br{}
         },
         Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
@@ -327,7 +335,28 @@ pub fn Miner(address: String) -> Element {
                         }
                     }
                 }
-                // {Chart()}
+                div {class:"row align-items-start",
+                div {class:"col",
+                    div {class:"card text-bg m-1",
+                        div {class:"card-title m-2"}
+                        span {class:"placeholder col-5 m-2"}
+                        div {class:"card-body", style:"min-width: 20rem; min-height: 20rem; max-height: 25rem;",
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                            span {class:"placeholder w-100"}
+                        }
+                    }
+                }
+            }
                 {WorkerTable(Stats::default())}
                 br{}
                 br{}
