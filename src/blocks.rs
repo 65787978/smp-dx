@@ -46,7 +46,29 @@ pub fn Blocks() -> Element {
                                                     if block.created != "" {
                                                         td{"{block.created}"}
                                                         td{"{block.block_height}"}
-                                                        td{"{block.effort}%"}
+
+                                                        if block.effort < 100.0 {
+                                                            td {
+                                                                div {class:"progress", "role":"progressbar", style:"height: 2rem;",
+                                                                    div {class:"progress-bar bg-success", style:"width: 100%", b{"{block.effort}%"}}
+                                                                }
+                                                            }
+                                                        }
+                                                        else if block.effort > 100.0 && block.effort < 200.0 {
+                                                            td {
+                                                                div {class:"progress", "role":"progressbar", style:"height: 2rem;",
+                                                                    div {class:"progress-bar bg-warning", style:"width: 100%", b{"{block.effort}%"}}
+                                                                }
+                                                            }
+                                                        }
+                                                        else {
+                                                            td {
+                                                                div {class:"progress", "role":"progressbar", style:"height: 2rem;",
+                                                                    div {class:"progress-bar bg-danger", style:"width: 100%", b{"{block.effort}%"}}
+                                                                }
+                                                            }
+                                                        }
+
                                                         td{"{block.block_reward} Σ"}
 
                                                         if block.confirmation_progress == 0.0 && block.block_reward == 0.0

@@ -1,4 +1,5 @@
 use crate::chart::Chart;
+
 use crate::data::*;
 use crate::workertable::WorkerTable;
 use dioxus::prelude::*;
@@ -73,7 +74,7 @@ pub fn Miner(address: String) -> Element {
                                     div {class:"row",
                                         div {class:"col",
                                             div {class:"card-body",
-                                            h5 {class:"card-text", "{stats.network.hashrate}"}, p {class:"card-text", "Network"}}
+                                            h5 {class:"card-text", "{stats.network.hashrate} Th/s"}, p {class:"card-text", "Network"}}
                                         }
                                         div {class:"col",
                                             div {class:"card-body", h5 {class:"card-text", "{stats.pool.hashrate} Gh/s"}, p {class:"card-text", "Pool"}}
@@ -116,7 +117,7 @@ pub fn Miner(address: String) -> Element {
 
                                 div {class:"row",
                                     div {class:"col m-1",
-                                        div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.pending_balance} Σ"}, p {class:"card-text m-2", "Pending Balance"}}
+                                        div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.pending_shares}"}, p {class:"card-text m-2", "Pending Shares"}}
                                     }
                                     div {class:"col m-1",
                                         div {class:"card-body", h5 {class:"card-text m-2", "{stats.miner.paid_24h} Σ"}, p {class:"card-text m-2", "24h Paid"}}
@@ -168,7 +169,8 @@ pub fn Miner(address: String) -> Element {
                     }
                 }
                 //Chart
-                // { Chart(stats.miner.clone()) }
+                { Chart(stats.miner.clone()) }
+                // {chart()}
                 {WorkerTable(stats.clone())}
                 br{}
         },

@@ -388,9 +388,12 @@ impl MinerStats {
             .round()
             / 100.0;
 
-        self.pending_shares = self.data["pendingShares"]
+        self.pending_shares = (self.data["pendingShares"]
             .as_f64()
-            .expect("pendingShares not available");
+            .expect("pendingShares not available")
+            * 100.0)
+            .round()
+            / 100.0;
 
         self.total_paid = (self.data["totalPaid"]
             .as_f64()
