@@ -75,7 +75,7 @@ pub fn Blocks() -> Element {
                                                         {
                                                             td{
                                                                 div {class:"progress", "role":"progressbar", style:"height: 2rem;",
-                                                                    div {class:"progress-bar bg-danger", style:"width: 100%", b{"Confirmed"}}
+                                                                    div {class:"progress-bar bg-danger", style:"width: 100%", b{"Orphan"}}
                                                                 }
                                                             }
                                                         }
