@@ -46,12 +46,12 @@ pub fn WorkerTable(stats: Stats) -> Element {
     } else {
         rsx!(
             div { class:"mt-3 ms-1 placeholder-wave",
-                h3 {span {class:"placeholder col-3 m-2"}}
+                h5 {span {class:"placeholder col-3 m-2"}}
                 table {class: "table table-hover placeholder-wave",
 
                         thead {
                             tr{
-                                th{ scope: "col", span {class:"placeholder col-1 m-2"}}
+                                th{ scope: "col", span {class:"placeholder col-5 m-2"}}
                                 th{ scope: "col", span {class:"placeholder col-5 m-2"}}
                                 th{ scope: "col", span {class:"placeholder col-5 m-2"}}
                             }
@@ -59,17 +59,17 @@ pub fn WorkerTable(stats: Stats) -> Element {
 
                        tbody {
                             tr{
-                                th{ scope: "row", span {class:"placeholder col-1 m-2"}}
-                                td{span {class:"placeholder col-3 m-2"}}
-                                td{span {class:"placeholder col-3 m-2"}}
+                                th{ scope: "row", span {class:"placeholder col-5 m-2"}}
+                                td{span {class:"placeholder col-5 m-2"}}
+                                td{span {class:"placeholder col-5 m-2"}}
                             }
 
                         }
                         thead {
                             tr{
-                                th{ scope: "col", span {class:"placeholder col-3 m-2"}}
-                                th{ scope: "col", span {class:"placeholder col-3 m-2"}}
-                                th{ scope: "col", span {class:"placeholder col-3 m-2"}}
+                                th{ scope: "col", span {class:"placeholder col-5 m-2"}}
+                                th{ scope: "col", span {class:"placeholder col-5 m-2"}}
+                                th{ scope: "col", span {class:"placeholder col-5 m-2"}}
                             }
                        }
                     }
