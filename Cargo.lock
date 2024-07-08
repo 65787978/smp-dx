@@ -460,6 +460,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "dioxus-charts"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "53ed46a5bf524783e4a3496a8ab38fbe129590d8a3e436c1297c14f96c559a1a"
+dependencies = [
+ "dioxus",
+ "log",
+]
+
+[[package]]
 name = "dioxus-cli-config"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2553,10 +2563,11 @@ checksum = "3c5e1a9a646d36c3599cd173a41282daf47c44583ad367b8e6837255952e5c67"
 
 [[package]]
 name = "smp-dx"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "chrono",
  "dioxus",
+ "dioxus-charts",
  "dioxus-logger",
  "futures",
  "gloo 0.11.0",

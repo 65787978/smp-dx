@@ -23,7 +23,7 @@ pub fn Blocks() -> Element {
         div {class:"row align-items-center mt-3",
             div {class:"col",
                 div {class:"card text-bg m-1",
-                    div {class:"card-title m-2", h3 {"Pool Blocks"}}
+                    div {class:"card-title m-2", h5 {"POOL BLOCKS"}}
                     div {class:"card-body", style:"min-width: 20rem; min-height: 20rem;",
                     match &*data.read_unchecked() {
                         Some(Ok(block_stats)) => rsx!(
@@ -32,12 +32,12 @@ pub fn Blocks() -> Element {
                                 table {class: "table table-hover",
                                         thead {
                                             tr{
-                                                th{ scope: "col", "Created"}
-                                                th{ scope: "col", "Height"}
-                                                th{ scope: "col", "Effort"}
-                                                th{ scope: "col", "Reward"}
-                                                th{ scope: "col", "Status"}
-                                                th{ scope: "col", "Miner"}
+                                                th{ scope: "col", "CREATED"}
+                                                th{ scope: "col", "HEIGHT"}
+                                                th{ scope: "col", "EFFORT"}
+                                                th{ scope: "col", "REWARD"}
+                                                th{ scope: "col", "STATUS"}
+                                                th{ scope: "col", "MINER"}
                                             }
                                         }
                                     tbody {
@@ -105,7 +105,155 @@ pub fn Blocks() -> Element {
                                 }
                         ),
                         Some(Err(error)) => rsx! { h1 { "Loading failed! Error: {error}"}},
-                        None => rsx!("Loading..."),
+                        None =>
+                            rsx!(
+                                div { class:"mt-3 ms-1 placeholder-wave",
+                                    table {class: "table table-hover placeholder-wave",
+
+                                            thead {
+                                                tr{
+                                                    th{ scope: "col", "CREATED"}
+                                                    th{ scope: "col", "HEIGHT"}
+                                                    th{ scope: "col", "EFFORT"}
+                                                    th{ scope: "col", "REWARD"}
+                                                    th{ scope: "col", "STATUS"}
+                                                    th{ scope: "col", "MINER"}
+
+                                                }
+                                            }
+
+                                            tbody {
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+
+                                                tr{
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+                                                    td{span {class:"placeholder col-8 m-2"}}
+
+                                                }
+                                            }
+                                        }
+                                }
+                            ),
                     }
                     }
                 }
