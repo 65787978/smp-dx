@@ -46,7 +46,7 @@ pub fn WorkerTable(stats: Stats) -> Element {
     } else {
         rsx!(
             div { class:"mt-3 ms-1 placeholder-wave",
-                h5 {span {class:"placeholder col-3 m-2"}}
+                h3 {"Active Workers: ", span {class:"placeholder col-1 m-2"}}
                 table {class: "table table-hover placeholder-wave",
 
                         thead {
